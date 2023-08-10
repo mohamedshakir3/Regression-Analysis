@@ -1,0 +1,195 @@
+\chapter{Preliminaries}
+
+\section{Random Variables}
+
+We start with a review of basic concepts and definitions from probabaility.
+
+\begin{definition}[Random Experiments]
+    A \emph{random experiment} is process with a sample space $\mathcal{S}$ for which it is impoosible to predict the outcome with certainty.
+\end{definition}
+Note that the sample space $\mathcal{S}$ is the set of all possible outcomes from a random experiment. 
+\begin{definition}[Random Variable]
+    A random variable $X$ is associated to a random experiment (or process) that is a function which maps the sample space to the real numbers, i.e $X: \mathcal{S} \mapsto \real$. If the set 
+    \[X(\mathcal{S}) = \{X(s) : s \in \mathcal{S}\}\]
+    is countable, then $X$ is a discrete random variable, and if it is uncountable then $X$ is a continuous random variable.
+\end{definition}
+
+\begin{definition}[Probability Functions]
+
+    Let $(\Omega, \mathcal{F}, P)$ be a probabaility space. A function $f:\real \rightarrow \real$ is called a probability density function if 
+    \begin{enumerate}
+        \item $f(x) \geq 0$  for all $x$ in the sample space, and 
+        \item $\int_{-\infty}^{\infty} f(x)dx = 1$
+    \end{enumerate}
+    For discrete random variables, we use a probability mass function which follows the same properties with the integral replaced by a sum.
+\end{definition}
+
+\begin{theorem}
+    Two random variables $X$ and $Y$ are indepedent if their joint probabaility function $f(x,y)$ is the product of their marginal distributions 
+    \[f(x,y) = f_X(x)f_Y(y)\]
+\end{theorem}
+
+\subsection{Expectation, Variance, and Covariance}
+
+\begin{definition}[Expected Value]
+    The expectation (or expected value) of a random variable $X$ is defined as 
+    \[E(X) = \mu = \int_A xf(x)dx\]
+\end{definition}
+The expectation is the average value, or the value expected to be observed by performing an experiment a very large number of times. We denote the expected value by $E(X) = \mu$ where $\mu$ is known as the mean. Note that $\bar{X}$ is the sample mean, which is the observed expected value from a population with mean $\mu$ given by 
+\[\bar{X} = \frac{1}{n}\sum_{i=1}^n X_i\]
+where $n$ is the sample size.
+\begin{definition}[Variance]
+    The variance of a random variable $X$ is given by
+    \[\Var(X) = \sigma^2 = E\left[(Y - E(Y))^2\right] = E(Y^2) - E(Y)^2\]
+\end{definition}
+Note that the standard deviation $\sigma$ is the square root of the variance $\sigma^2$.
+\begin{definition}[Covariance]
+    The covariance of two random variables $X,Y$ is defined by 
+    \[\Cov(X,Y) = E[(X-E(X))(Y - E(Y))] = E(XY) - E(X)E(Y)\]
+\end{definition}
+\begin{definition}[Correlation]
+    The correlation of two random variables $\rho$ is defined by 
+    \[\rho(X,Y) = \frac{Cov(X,Y)}{\Var(X)\Var(Y)}\]
+    with $\Var(X)\Var(Y) \neq 0$.
+\end{definition}
+When the correlation of two random variables is 0, we say that they are uncorrelated.
+
+\subsection{Properties}
+\begin{enumerate}[label=(\roman*)]
+    \item The expectation is a linear operator, i.e 
+    \[E\left(\sum_{i=1}^n a_iX_i\right) = \sum_{i=1}^n a_iE(X_i)\]
+    \item The variance is not linear in the same way, 
+    \[\Var(aX) = a^2\Var(X)\]
+    \[\Var\left(\sum_{i=1}^n a_iX_i\right) = \sum_{i=1}^n\sum_{j=1}^n a_ia_j\Cov(X_i, X_j) =  \sum_{i=1}^na_i^2\Var(X_i) + \sum_{i\neq j}\Cov(Y_i,Y_j)\]
+    \item $\Cov(X,X) = \Var(X)$ and $\Cov(X,Y) = \Cov(Y,X)$.
+    \item If $X_i$ are uncorrelated, then 
+    \[\Var\left(\sum_{i=1}^n a_iX_i, \sum_{i=1}^n c_iX_i\right) = \sum_{i=1}^na_ic_i\Var(X_i)\]
+    \item $\Cov(X,Y) < 0$ if and only if observations of $X$ above it's sample mean $\bar{X}$ tend to accompany corresponding observations of $Y$ below it's sample mean $\bar{Y}$ and vice-versa. 
+    \item $\Cov(X,Y) > 0$ if and only if observations of $X$ above $\bar{X}$ tend to accompany corresponding observations of $Y$ above $\bar{Y}$ and vice-versa. 
+    \item $\Cov(X,Y) = 0 \implies$ $X$ and $Y$ are uncorrelated
+    \item If $X$ and $Y$ are indepedent, then they are uncorrelated. The opposite is not true however. 
+    \item $|\rho(X,Y)| \leq 1$. 
+    \item $\rho(X,Y)| = 1 \iff X = aY + b$ for some $a,b \in \real$, in otherwords $X$ is a linear combination of $Y$.
+\end{enumerate}
+
+\subsection{Random Vectors}
+
+\begin{definition}[Random Vectors]
+    If $X_1, \ldots, X_n$ are random variables, then 
+    \[\vec{X} = \begin{pmatrix}
+        X_1 \\ \vdots \\ X_n
+    \end{pmatrix}\]
+    is a random vector, and the expected value for $\vec{X}$ is 
+    \[E(\vec{X}) = \begin{pmatrix}
+        E(X_1) \\ \vdots \\ E(X_n)
+    \end{pmatrix}\]
+\end{definition}
+Note that $X_i$'s do not necessarily have the same distributions.
+\begin{definition}[Variance-Covariance Matrix]
+    The \emph{variance-covariance} matrix of $\vec{X}$ is the symmetric matrix 
+    \[\Var(\vec{X}) = [g_{ij}]\]
+    where the entries $g_{ij}$ are 
+    \[g_{ij} = \begin{cases}
+        \Var(X_i) & i = j\\
+        \Cov(X_i, X_j) & i \neq j
+    \end{cases}\]
+\end{definition}
+In otherwords, the matrix looks like 
+\[\Var(\vec{X}) = \begin{pmatrix}
+    \Var(X_1) & \cdots & \Cov(X_1,X_n) \\
+    \vdots & \ddots & \vdots \\
+    \Cov(X_1, X_n) & \cdots & \Var(X_n)
+\end{pmatrix}\]
+If $X_1, \ldots, X_n$ are indepedent with the same variance $\sigma^2$, then 
+\[\Var(\Vec{X}) = \sigma^2I_n\]
+where $I_n$ is the $n\times n$ identity matrix.
+\subsection{Samples}
+In practice, we usually work with samples from the random variables, so we do not have the population mean $\mu$ and population variance $\sigma^2$. Instead, we used unbiased estimators $\bar{X}$ and $s^2$ to estimate $E(X) = \mu$ and $\Var(X) = \sigma^2$ respectively. Let $\{X, Y\}_{i=1}^n$ be a sequence of random variables, then the sample means are given by 
+\[\bar{X} = \frac{1}{n}\sum_{i=1}^n X_i, \ \bar{Y} = \sum_{i=1}^n Y_i\]
+and the sample variance is 
+\[s_X^2 = \frac{1}{n-1}\sum_{i=1}^n(X_i - \bar{X})^2, \ s_Y^2 = \frac{1}{n-1}\sum_{i=1}^n (Y_i - \bar{Y})^2\]
+Note that for the sample variance we divide by $n-1$ because we have 1 less degree of freedom since to calculate the sample variance, we use the sample mean which also uses the $n$ samples. The sample covariance is given by 
+\[s_{XY} = \frac{1}{n-1} \sum_{i=1}^n (X_i - \bar{X})(Y_i - \bar{Y})\]
+\subsection{Important Distributions}
+
+\begin{definition}[Cumulative Distribution Functions]
+    The cumulative distribution function (c.d.f) of a continuous random variable $X$ is defined by 
+    \[F(x) = P(X \leq x) = \int_{-\infty}^x f(t)dt\]
+    where $f(x)$ is the probabaility density function of $X$. 
+\end{definition}
+Note that 
+\[f(x) = \frac{d}{dx} F(x)\]
+\subsection*{Normal Distribution}
+We denote a random variable $X$ with normal distribution with mean $\mu$ and variance $\sigma^2$ as $X \sim N(\mu, \sigma^2)$, with c.d.f 
+\[F(x) = P(X \leq x) = \Phi(x)\]
+and p.d.f 
+\[f(x) = \Phi'(x) = \frac{1}{\sigma\sqrt{2\pi}}\exp\left(-\frac{1}{2}\left(\frac{y-\mu}{\sigma}\right)^2\right)\]
+Note that we cannot calculate a formula for the c.d.f but compute values for it by evaluating the integral numerical for various values of $\Phi(x)$. 
+\subsection*{Chi-Squared Distribution}
+We say a random variable $X$ has a $\chi^2$ distribution with $\nu$ degrees of random $X \sim \chi^2(\nu)$, with a p.d.f 
+\[f(x; \nu) = \frac{x^{\nu/2 - 1}e^{-x/2}}{2^{\nu/2}\Gamma\left(\frac{\nu}{2}\right)}I(y > 0)\]
+where $\Gamma$ is the gamma function. If we have $X_i \sim \chi^2(\nu_i)$, then 
+\[\sum_{i=1}^n X_i \sim \chi^2\left(\sum_{i=1}^n \nu_i\right)\]
+There is an important relationship between the chi-squared distribution and the normal distrubtion. Let $Z \sim N(0,1)$, that is $Z$ follows a standard normal distribution, then $Z^2 \sim \chi^2(1)$. 
+\subsection*{$t$-Distribution}
+If $Z \sim N(0,1)$, and $U \sim \chi^2(\nu)$ with $Z$ and $U$ indepedent, then 
+\[T = \frac{Z}{\sqrt{U/\nu}} \sim t(\nu)\]
+This is the $t$-distribution with $\nu$ degrees of freedom.
+\subsection*{$F$-Distribution}
+If $U_1 \sim \chi^2(\nu_1)$, and $U_2 \sim \chi^2(\nu_2)$ are indepedent, then 
+\[F = \frac{U_1/\nu_1}{U_2/\nu_2} \sim F(\nu_1, \nu_2)\]
+which is known as the $F$-Distribution (or Fisher's distribution) with $\nu_1$, $\nu_2$ degrees of freedom. 
+\begin{theorem}
+    Let $X_i, \ldots, X_n$ be indepedent normal random variables with mean $\mu_1,\ldots, \mu_n$ and variance $\sigma^2_1, \ldots \sigma^2_n$, then 
+    \[X_1 + \cdots + X_n = N(\mu_1 + \cdots + \mu_n, \sigma^2_1 + \cdots + \sigma^2_n)\]
+\end{theorem}
+\begin{theorem}[Central Limit Theorem]
+    Let $\{X_i\}$ be a sequence of random variables with mean $\mu$, and variance $\sigma^2$ and sample mean $\bar{X}$, then 
+    \[Z = \frac{\bar{X} - \mu}{\sigma / \sqrt{n}} \rightarrow N(0,1)\]
+\end{theorem}
+Note that we can represent this in many equivalent ways, such as 
+\[\sqrt{n}(\bar{X} - \mu) \rightarrow \sigma N(0,1) = N(0, \sigma^2)\]
+\begin{theorem}
+    Let $X_1, \ldots, X_n$ be indepedent normal random variables with mean $\mu$ and variance $\sigma^2$. Let $\bar{X}$ be the sample mean and $s^2$ be the sample variance, then 
+    \[T = \frac{\bar{X} - \mu}{s/\sqrt{n}} \sim t(n-1)\]
+\end{theorem}
+
+\section{Multivariate Calculus}
+\begin{definition}[Gradient]
+    Let $f: \real^n \rightarrow \real$ be a differentiable function. if $\vec{X} = (X_1, \ldots, X_n)$, then the gradient of $f$ is 
+    \[\nabla f(\vec{X}) = \begin{pmatrix}
+        \frac{\partial f(\vec{X})}{\partial X_1 } \\ \frac{\partial f(\vec{X})}{\partial X_2 } \\ \vdots \\ \frac{\partial f(\vec{X})}{\partial X_n }
+    \end{pmatrix}\]
+\end{definition}
+The gradient is a \emph{linear operator}, so 
+\[\nabla (af + bg)(\vec{X}) = a\nabla f(X) + b \nabla g(X)\]
+
+
+\section{Matrix Algebra}
+Let $A \in M_{m,n}(\real)$, and $\vec{X}$ be a random vector. Consider the linear transformation $W = A\vec{X}$. Then 
+\[E(W) = AE(\vec{X}), \ \Var(W) = A\Var(\vec{X})A^T\]
+Furthermore, if $\vec{X} \sim N(E(\vec{X}), \Var(\vec{X}))$, then 
+\[W \sim N(E(W), \Var(W)) = N(AE(\vec{X}), A\Var({\vec{X}})A^T)\]
+Note that since $\vec{X}$ is a random vector, it is $n\times 1$, and $A$ is $m \times n$, so $A\vec{X}$ is $m \times 1$ and the variance-covariance matrix $\Var(A\vec{X})$ is square $m \times m$. 
+\begin{definition}[Trace]
+    If $A \in M_{n,n}(\real)$, that is, $A$ is a square matrix, then the \emph{trace} of $A$ is defined as 
+    \[\trace(A) = \sum_{i=1}^n a_{ii} = a_{11} + a_{22} + \cdots + a_{nn}\]
+\end{definition}
+\noindent 
+The trace is a linear operator 
+\[\trace(kA + B) = k\trace(A) + \trace(B)\]
+and we also have that if $AB$ and $BA$ are square, 
+\[\trace(AB) = \trace(BA)\]
+\begin{definition}[Transpose]
+    The transpose of a matrix $A$ denoted by $A^T$ is obtained by interchanging its rows and its columns. Or in otherwords, simply reflecting the matrix along its primary diagonal.
+\end{definition}
+\subsection*{Properties}
+If $A \in M_{n,n}(\real)$ and $k \in \real$, then 
+\begin{enumerate}[label=(\roman*)]
+    \item $(A^T)^T = A$ 
+    \item $k^T = k$ 
+    \item $(kA + B)^T = kA^T + B^T$ 
+    \item $(AB)^T = B^TA^T$
+\end{enumerate}
+
+\section{Quadratic Forms}

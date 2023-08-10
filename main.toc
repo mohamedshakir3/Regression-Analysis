@@ -1,0 +1,10 @@
+\contentsline {chapter}{\numberline {1}Preliminaries}{2}{chapter.1}%
+\contentsline {section}{\numberline {1.1}Random Variables}{2}{section.1.1}%
+\contentsline {subsection}{\numberline {1.1.1}Expectation, Variance, and Covariance}{3}{subsection.1.1.1}%
+\contentsline {subsection}{\numberline {1.1.2}Properties}{3}{subsection.1.1.2}%
+\contentsline {subsection}{\numberline {1.1.3}Random Vectors}{4}{subsection.1.1.3}%
+\contentsline {subsection}{\numberline {1.1.4}Samples}{5}{subsection.1.1.4}%
+\contentsline {subsection}{\numberline {1.1.5}Important Distributions}{5}{subsection.1.1.5}%
+\contentsline {section}{\numberline {1.2}Multivariate Calculus}{7}{section.1.2}%
+\contentsline {section}{\numberline {1.3}Matrix Algebra}{7}{section.1.3}%
+\contentsline {section}{\numberline {1.4}Quadratic Forms}{8}{section.1.4}%

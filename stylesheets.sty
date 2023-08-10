@@ -1,0 +1,87 @@
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{mathtools}
+\usepackage{enumitem}
+\usepackage{setspace}
+\usepackage[dvipsnames]{xcolor}
+\usepackage{amsthm}
+\usepackage{centernot}
+
+\newcommand{\real}[0]{\mathbb{R}}
+\newcommand{\ints}[0]{\mathbb{Z}}
+\newcommand{\nat}[0]{\mathbb{N}}
+
+\newcommand{\notimplies}[0]{\centernot\implies}
+\newcommand{\iid}[0]{\overset{\mathrm{iid}}{\sim}}
+
+\newcommand{\blue}[1]{\textcolor{blue}{#1}}
+\newcommand{\red}[1]{\textcolor{red}{#1}}
+\newcommand{\green}[1]{\textcolor{green}{#1}}
+\newcommand{\pink}[1]{\textcolor{pink}{#1}}
+\newcommand{\purple}[1]{\textcolor{purple}{#1}}
+
+\newcommand{\hlgreen}[1]{\colorbox{green}{#1}}
+\newcommand{\hlblue}[1]{\colorbox{cyan}{#1}}
+\newcommand{\hlred}[1]{\colorbox{red}{#1}}
+\newcommand{\hlyellow}[1]{\colorbox{yellow}{#1}}
+\newcommand{\hlpink}[1]{\colorbox{pink}{#1}}
+
+
+\newcommand{\conp}[0]{\xrightarrow{P}}
+\newcommand{\conas}[0]{\xrightarrow{a.s}}
+\newcommand{\conlp}[1]{\xrightarrow{L^{#1}}}
+\newcommand{\cond}[0]{\xrightarrow{d}}
+\newcommand{\conc}[0]{\xrightarrow{c}}
+
+\newcommand\eqd{\mathrel{\overset{\makebox[0pt]{\mbox{\normalfont\tiny\sffamily d}}}{=}}}
+
+\newcommand{\stepFunction}[2]{((x<#1) * 0) + ((x>=#1) * #2)}
+\newcommand{\stepSum}[4]{\stepFunction{#1}{#2} + \stepFunction{#3}{#4}}
+
+\newcommand{\infseq}[1]{({#1}_n)_{n=1}^\infty}
+\newcommand{\seq}[3]{({#1}_{#2})^{#3}_{#2 = 1}}
+\newcommand{\infser}[1]{\sum\limits_{n=1}^\infty #1_n}
+
+
+\DeclareMathOperator{\trace}{tr}
+
+
+
+\DeclareMathOperator{\Unif}{Unif}
+\DeclareMathOperator{\Var}{Var}
+\DeclareMathOperator{\Cov}{Cov}
+\DeclareMathOperator{\Bern}{Bernoulli}
+\DeclareMathOperator{\Bin}{Bin}
+\DeclareMathOperator{\Pois}{Poisson}
+
+
+\newtheorem{manualtheoreminner}{Theorem}
+\newenvironment{manualtheorem}[1]{%
+  \renewcommand\themanualtheoreminner{#1}%
+  \manualtheoreminner
+}{\endmanualtheoreminner}
+
+\newtheorem{manualcorollaryinner}{Corollary}
+\newenvironment{manualcorollary}[1]{%
+  \renewcommand\themanualcorollaryinner{#1}%
+  \manualcorollaryinner
+}{\endmanualcorollaryinner}
+
+\newtheorem{manuallemmainner}{Lemma}
+\newenvironment{manuallemma}[1]{%
+  \renewcommand\themanuallemmainner{#1}%
+  \manuallemmainner
+}{\endmanuallemmainner}
+
+\newtheorem{manualdefinitioninner}{Definition}
+\newenvironment{manualdefinition}[1]{%
+  \renewcommand\themanualdefinitioninner{#1}%
+  \manualdefinitioninner
+}{\endmanualdefinitioninner}
+
+
+\newtheorem{manualpropinner}{Proposition}
+\newenvironment{manualprop}[1]{%
+  \renewcommand\themanualpropinner{#1}%
+  \manualpropinner
+}{\endmanualpropinner}
