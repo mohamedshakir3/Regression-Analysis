@@ -1,0 +1,10 @@
+*.aux
+*.fdb_latexmk
+*.fls
+*.log
+*.toc
+*.tikz
+*.out
+*.synctex.gz
+lec23.pdf
+assignments/
