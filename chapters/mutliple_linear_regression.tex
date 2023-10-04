@@ -1,0 +1,72 @@
+\chapter{Multiple Linear Regression}
+
+We call a regression model with more than one regressor variable a \textbf{multiple regression model.}
+
+\section{Matrix Approach to Regression}
+
+We will first cover simple linear regression in matrix form. 
+
+Let $Y = [Y_1, \ldots, Y_n]^T$ be a column data vector, and we'll define the expected value as 
+\[E(Y) = \begin{bmatrix}
+    E(Y_1)\\ \vdots \\ E(Y_n)
+\end{bmatrix}\]
+
+\begin{prop}
+    If $Z = AY + B$ for a matrix of constants $A$, and $B$, then 
+    \[E(Z) = AE(Y) + B\]
+\end{prop}
+\begin{proof}
+    Simply from the definition of expectations on vectors, 
+    \[E(Z_i) = E\left(\left[\sum_j a_{ij}Y_j\right] + b_i\right) = \sum_j a_{ij}E(Y_j) + b_i\]
+    So 
+    \[E(Z) = AE(Y) + B\] 
+\end{proof}
+
+\begin{definition}
+    The covariance of a vector of data 
+    \[Y = \begin{bmatrix}
+        Y_1\\ \vdots \\ Y_n
+    \end{bmatrix}\]
+    is 
+    \[\Cov(Y) = E([Y - E(Y)][Y-E(Y)]^T) = \Sigma\]
+\end{definition}
+
+\begin{prop}
+    $\Cov(AY) = A\Sigma A^T$. 
+\end{prop}
+
+\begin{definition}
+    A random vector $Y$ has a multivariate normal distribution if its density is given by 
+    \[f(y_1, \ldots, y_n) = \frac{|\Sigma|^{-1/2}}{\exp\left(-\frac{1}{2}(Y - \mu)^T\Sigma^{-1}(Y - \mu)\right)}\]
+    where 
+    \[Y^T = (y_1, \ldots, y_n), \ \mu^T = (\mu_1, \ldots, \mu_n)\]
+    we denote this by 
+    \[Y \sim N_n(\mu, \Sigma)\]
+\end{definition}
+
+\begin{theorem}
+    Let $Y \sim N_n(\mu, \Sigma)$. Let $A$ be an arbitrary $p \times n$ matrix of constants. Then 
+    \[Z = AY + B \sim N_p(A\mu + B, A\Sigma A^T)\] 
+\end{theorem}
+This theorem implies that any linear combination of normal variates has a normal distribution. This theorem won't be proved here.
+
+\subsection{Derivatives}
+
+\begin{itemize}
+    \item $z = a'y \rightarrow \frac{\partial z}{\partial y} = a$
+    \item $z = y'y \rightarrow \frac{\partial z}{\partial y} = 2y$
+    \item $z = a'Ay \rightarrow \frac{\partial z}{\partial y} = A'a$ 
+    \item $z = y'Ay  \rightarrow \frac{\partial z}{\partial y} = A'y + Ay$
+    \item If $A$ is symmetric, then $z = y'Ay  \rightarrow \frac{\partial z}{\partial y} = 2A'y$
+\end{itemize}
+
+
+\section{Multiple Regression Models}
+
+Suppose we have 2 regressor variables, a multiple regression model that may describe a relationshup with our data is 
+\[y = \beta_0 + \beta_1x_1 + \beta_2x_2 + \epsilon\]
+The parameter $\beta_1$ indicates the expected change in response per unit change in $x_1$ when $x_2$ is held constant. Similarly $\beta_2$ measures the change in $y$ per unit change in $x_2$ when $x_1$ is held constant.  
+
+\subsection{Least Squares Estimation of Regression Coefficients}
+
+The method of \textbf{least squares} can be used to estimate the regression coefficients. Suppose $n > k$ observations are available, and let $y_i$ denote the $i$th observed response $x_{ij}$ denote the $i$th observation or level
