@@ -367,3 +367,31 @@ It may be also useful to note that
 \[E(SS_{LOF}) = \sigma^2 + \frac{\sum_{i=1}^m n_i(E(y_i) - \beta_0 - \beta_1x_i)^2}{m-2}\]
 and $E(SS)_{LOF} = \sigma^2$ when we fail to reject the null hypothesis $H_0: E(y_i) = \beta_0 + \beta_1x$, since the second term becomes 0, and 
 \[E(SS_{PE}) = \sigma^2\] 
+
+\section{Confidence Intervals in Multiple Regression}
+
+\subsection{Confidence Intervals on Regression Coefficients}
+
+We want to construct confidence intervals for the regression coefficients $\beta_j$. We use the same assumptions that $\epsilon_i \iid N(0, \sigma^2)$. So our observations $y_i$ are normally and independently distributed with mean 
+\[\beta_0 + \sum_{j=1}^k \beta_jx_{ij}\]
+and variance $\sigma^2$. $\hat{\beta}$ is a linear combination of the observations, so it follows a normal distribution with a mean vector $\beta$ and covariance matrix $\sigma^2(X'X)^{-1}$. This implies that the marginal distribution for any $\hat{\beta_j}$ is normal with mean $\beta_j$ and variance $\sigma^2C_{jj}$ where $C_{jj}$ is the $j$th diagonal entry in the matrix $(X'X)^{-1}$. Thus, 
+\[\frac{\hat{\beta}_j-\beta_j}{\sqrt{\hat{\sigma}^2C_{jj}}} \sim t_{n-p}\]
+So our $100(1-\alpha)$ percent confidence interval for $\beta_j$ is 
+\[\hat{\beta}_j - t_{\alpha/2,n-p}\sqrt{\hat{\sigma}^2C_{jj}} \leq \beta_j \leq \hat{\beta}_j - t_{\alpha/2,n-p}\sqrt{\hat{\sigma}^2C_{jj}}\]
+Recall that we refer to
+\[se(\hat{\beta}_j) = \sqrt{\hat{\sigma}^2C_{jj}}\]
+as the standard error of $\hat{\beta}_j$.
+
+\subsection{Confidence Intervals On the Mean Response}
+\renewcommand{\arraystretch}{1.25}
+We can also construct confidence intervals on a specfic point, such as $x_{01},x_{02}, \ldots, x_{0k}$. We'll define the vector $x_0$ as 
+\[x_0 = \begin{bmatrix}
+    1 \\ x_{01} \\ x_{02} \\ \vdots \\ x_{0k}
+\end{bmatrix}\]
+The fitted value coressponding to this point is 
+\[\hat{y}_0 = x_0'\hat{\beta}\]
+This is an unbiased estimator for $E(y|x_0)$ since $E(\hat{y}_0) = x_0'\beta = E(y|x_0)$, and the variance is 
+\[\Var(\hat{y}_0) = \sigma^2x_0'(X'X)^{-1}x_0\]
+Thus our confidence interval for the mean response $E(y|x_0)$ is 
+\[\hat{y}_0 - t_{\alpha/2,n-p}\sqrt{\hat{\sigma}^2x_0'(X'X)^{-1}x_0} \leq E(y|x_0) \leq \hat{y}_0 + t_{\alpha/2,n-p}\sqrt{\hat{\sigma}^2x_0'(X'X)^{-1}x_0}\]
+\subsection{Simultaneous Confidence Intervals on Regression Coefficients}
