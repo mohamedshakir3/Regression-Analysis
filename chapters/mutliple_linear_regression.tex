@@ -69,4 +69,301 @@ The parameter $\beta_1$ indicates the expected change in response per unit chang
 
 \subsection{Least Squares Estimation of Regression Coefficients}
 
-The method of \textbf{least squares} can be used to estimate the regression coefficients. Suppose $n > k$ observations are available, and let $y_i$ denote the $i$th observed response $x_{ij}$ denote the $i$th observation or level
+The method of \textbf{least squares} can be used to estimate the regression coefficients. Suppose $n > k$ observations are available, and let $y_i$ denote the $i$th observed response $x_{ij}$ denote the $i$th observation or level of regressor. We can write the sample regression model as 
+\[y_i = \beta_0 + \beta_{1}x_{i1} + \beta_2x_{i2} + \cdots + \beta_kx_{ik} + \epsilon_i = \beta_0 + \sum_{j=1}^k \beta_jx_{ij} + \epsilon_i\]
+for $i = 1, 2, \ldots, n$. Then the least squares function is  
+\[S(\beta_0, \beta_1, \ldots, \beta_k) = \sum_{i=1}^n \epsilon_i = \sum_{i=1}^n\left(y_i - \beta_0 - \sum_{j=1}^k \beta_jx_{ij}\right)^2\]
+Similar to the simple linear regression approach with $Q$, we want to minimize $S$ witih respect to $\beta_0, \beta_1,\ldots, \beta_k$. So the least squares estimators must satisfy 
+\[\frac{\partial S}{\partial \beta_0}\bigg\vert_{\hat{\beta_0}, \ldots, \hat{\beta_k}} = -2\sum_{i=1}^n \left(y_i - \hat{\beta_0} - \sum_{j=1}^k \beta_jx_{ij}\right) = 0\]
+and similarly for the rest of the estimators for $\beta_j$ for $j = 1, \ldots, k$. 
+\[\frac{\partial S}{\partial \beta_j}\bigg\vert_{\hat{\beta_0}, \ldots, \hat{\beta_k}} = -2\sum_{i=1}^n \left(y_i - \hat{\beta_0} - \sum_{j=1}^k \beta_jx_{ij}\right)x_{ij} = 0\]
+When simplifying these equations, we get the least squares \textbf{normal equations}, which we will put in terms of matrices later on. 
+\[n\hat{\beta_0} + \hat{\beta_1}\sum_{i=1}^n x_{i1} + \hat{\beta_2}\sum_{i=1}^n x_{i2} + \cdots + \hat{\beta_k}\sum_{i=1}^n x_{ik} = \sum_{i=1}^n y_i\]
+\[\hat{\beta_0}\sum_{i=1}^n x_{i1} + \hat{\beta_1}\sum_{i=1}^n x_{i1}^2 + \hat{\beta_2}\sum_{i=1}^n x_{i1}x_{i2} + \cdots + \hat{\beta_k}\sum_{i=1}^n x_{ik}x_{i1} = \sum_{i=1}^n x_{i1}y_i\]
+\[\vdots\]
+\[\hat{\beta_0}\sum_{i=1}^n x_{ik} + \hat{\beta_1}\sum_{i=1}^n x_{i1}x_{ik}+ \hat{\beta_2}\sum_{i=1}^n x_{ik}x_{i2} + \cdots + \hat{\beta_k}\sum_{i=1}^n x_{ik}^2 = \sum_{i=1}^n x_{ik}y_i\]
+Note that there are $p = k+1$ normal equations for each of the unknown regression coefficients. The solutions give us the \textbf{least squares estimators} $\hat{\beta_0}, \hat{\beta_1}, \ldots, \hat{\beta_k}$.
+
+As mentioned earlier, it is easier to work with matrix notation, so we will express the model using matrices 
+\[Y = X\beta + \epsilon\]
+where 
+\[Y = \begin{bmatrix}
+    y_1\\y_2\\\vdots\\y_n
+\end{bmatrix}, \ X = \begin{bmatrix}
+    1 & x_{11} & x_{12} & \cdots x_{1k}\\
+    1 & x_{21} & x_{22} & \cdots x_{2k}\\
+    \vdots & \vdots & \vdots & \vdots\\
+    1 & x_{n1} & x_{n2} & \cdots x_{nk}
+\end{bmatrix}\]
+\[\beta = \begin{bmatrix}
+    \beta_0 \\ \beta_1 \\ \vdots \\\beta_k
+\end{bmatrix}, \ \epsilon = \begin{bmatrix}
+    \epsilon_1 \\ \epsilon_2 \\ \vdots \\ \epsilon_n
+\end{bmatrix}\]
+
+In general, $Y$ is an $n \times 1$ vector of observations, $X$ is an $n \times p$ matrix of the levels of the regressor variables, $\beta$ is a $p \times 1$ vector of regression coefficients, and $\epsilon$ is an $n \times 1$ vector of random variables. Note that from here on out we will denote the transpose of a matrix $A^T$ as $A'$. We want to find the vector of least sqaures estimators $\hat{\beta}$ that minimizes 
+\[S(\beta) = \sum_{i=1}^n = \epsilon'\epsilon = (Y-X\beta)'(Y - X\beta)\]
+This can be expanded as 
+\[S(\beta) = Y'Y - \beta'X'Y - Y'X\beta + \beta'X'X\beta = Y'Y - 2\beta'X'Y + \beta'X'X\beta\]
+This is derived from using the fact that $\beta'X'Y$ is a $1 \times 1$ matrix, so it is a scalar and its transpose is the same. Now our equation must satisfy
+\[\frac{\partial S}{\partial \beta}\bigg\vert_{\hat{\beta}} = -2X'Y + 2X'X\hat{\beta} = 0\]
+This gives us 
+\[X'X\hat{\beta} = X'Y\]
+The equations here our are \textbf{least-squares} normal equations. They are the same as the previous equations we found earlier not in matrix form. \\
+
+We can solve the normal equations by multiplying both sides of our equation by $X'X$ to give us 
+\[\hat{\beta} = (X'X)^{-1}X'Y\]
+provided that the inverse exists. \\
+
+The fitted regression model corresponding to the levels of regressor vairables $x' = [1, x_1, x_2,\ldots, x_k]$ is then 
+\[\hat{y} = x'\hat{\beta} = \hat{\beta_0} + \sum_{j=1}^k\hat{\beta}_jx_j\]
+So the vector of fitted values $\hat{y}_i$ corresponding to the observed values $y_i$ it
+\[\hat{Y} = X\hat{\beta} = X(X'X)^{-1}X'Y = HY\]
+The $n \times n$ matrix $H = X(X'X)^{-1}X'$ is known as the \textbf{hat matrix}. It maps the vector of observed values to a vector of fitted values (in otherwords, it "puts the hat" on $Y$). 
+\subsection{Properties of the Hat Matrix $H$}
+The hat matrix has some useful properties, notably
+\begin{enumerate}[label=(\alph*)]
+    \item $H$ is a projection matrix, so it is idempotent and symmetric
+    \[HH = H\]
+    \[H' = H\]
+    \item The matrix $H$ is orthogonal to the matrix $I - H$, so 
+    \[(I - H)H = H - HH = 0\]
+    Moreover, $(I-H)$ is idempotent and a project matrix as well.
+    \item The vector of residuls, which we will denote as $\vec{e}$, is given as 
+    \[\vec{e} = Y - \hat{Y} = Y - HY = (I-H)Y\]
+    \item Properties (b) and (c) imply that the observation vector $Y$ is projected onto a space spanned by the columns of $H$, and the residuals are in an orthogonal space (similar to the case for the simple linear regression model).
+    \[Y = HY + (I-H)Y\]
+    \item Similar to our simple linear model, we can apply the pythagorean theorem (from the fact that the matrices are orthogonal) to obtain 
+    \[||Y||^2 = ||HY||^2 + ||(I-H)||^2\]
+\end{enumerate}
+We will see later why expressing 
+\[\vec{e} = Y - X\hat{\beta} = Y - HY = (I-H)Y\]
+is useful.
+
+\subsection{Properties of the Least-Squares Estimators}
+
+We can first show that $\hat{\beta}$ is an unbiased estimators, 
+\begin{align*}
+    E(\hat{\beta}) &= E\left[(X'X)^{-1}X'Y\right]\\
+                   &= E\left[(X'X)^{-1}X'(X\beta + \epsilon)\right]\\
+                   &= E\left[(X'X)^{-1}X'X\beta + X'\epsilon\right]\\
+                   &= E\left[\beta + \epsilon\right]\\
+                   &= E(\beta) + E(\epsilon)\\
+                   &= \beta
+\end{align*}
+This is using the fact that $E(\epsilon) = 0$. So if our model assumptions hold, $\hat{\beta}$ is an unbiased estimator for $\beta$.\\
+The variance of $\hat{\beta}$ is expressed by the covariance matrix
+
+\[\Cov(\hat{\beta}) = E\left\{[\hat{\beta} - E(\hat{\beta})][\hat{\beta} - E(\hat{\beta})]^T\right\}\]
+
+\subsection{Estimation of $\sigma^2$}
+
+We may devlop an estimator for $\sigma^2$ using the residual sum of squares, 
+\[SSE = \sum_{i=1}^n (y_i - \hat{y}_i)^2 = \sum_{i=1}^n e_i^2 =e'e\]
+
+Then, we can substitute $e = Y - X\hat{\beta}$, 
+\begin{align*}
+    SSE &= (Y - X\hat{\beta})'(Y - X\hat{\beta})\\
+        &= Y'Y - \hat{\beta}'X'Y - Y'X\hat{\beta} + \hat{\beta}'X'X\hat{\beta}\\
+        &= Y'Y - 2\hat{\beta}'X'Y + \hat{\beta}'X'X\hat{\beta}
+\end{align*}
+Then since $X'X\hat{\beta} = X'y$, we get
+\[SSE = Y'Y - \hat{\beta}'X'Y\]
+It can be shown that $SSE$ has $n-p$ degres of freedom since $p$ parameters are estimated in the regression model. This gives us the \textbf{residual mean square} or \textbf{mean sqaure error}
+\[MSE = \frac{SSE}{n-p}\]
+It can be shown that $MSE$ is again an unbiased estimator for $\sigma^2$, therefore 
+\[\hat{\sigma}^2 = MSE\]
+\section{Estimation and Hypothesis Testing in Multiple Linear Regression}
+
+The true relationship between $y$ and our regressors $x_1,\ldots, x_k$ is unknown, and our multiple linear regression model is used to approximate this. Models sometimes are more complex in structure than the model we've discussed, 
+\[y = \beta_0 + \beta_1x_1 + \beta_2x_2 + \cdots + \beta_kx_k + \epsilon\]
+but we can still use a multiple linear regression model. For eaxmple, consider a cubic polynomial model 
+\[y = \beta_0 + \beta_1x + \beta_2x^2 + \beta_3x^3 + \epsilon\]
+If we set $x_1 = x$, $x_2 = x^2$, and $x_3 = x^3$, we can rewrite the equation as 
+\[y = \beta_0 + \beta_1x_1 + \beta_2x_2 + \beta_3x_3 + \epsilon\]
+Models that include \textbf{interaction effects} may also be analyzed by multiple linear regression methods. For example if we have the model 
+\[y = \beta_0 + \beta_1x_1 + \beta_2x_2 + \beta_{12}x_1x_2 + \epsilon\]
+we can set $x_3 = x_1x_2$, and $\beta_3 = \beta_{12}$, then we get
+\[y = \beta_0 + \beta_1x_1 + \beta_2x_2 + \beta_3x_3 + \epsilon\]
+Finally, consider a \textbf{second-order model with interaction}
+\[y = \beta_0 + \beta_1x_1 + \beta_2x_2 + \beta_{11}x_1^2 + \beta_{22}x_2^2 + \beta_{12}x_1x_2 + \epsilon\]
+We can set $x_3 = x_1^3$, $x_4 = x_2^2$, $x_5 = x_1x2$, $\beta_3 = \beta_{11}$, $\beta_4 = \beta_{22}$, and $\beta_5 = \beta_{12}$, then we can get our linear model 
+\[y = \beta_0 + \beta_1x_1 + \beta_2x_2 + \beta_3x_3 + \beta_4x_4 + \beta_5x_5 + \epsilon\]
+Our predictor variables my also be qualitative, for example 
+\[X = \begin{cases}
+    0 & \text{if subject is male}\\
+    1 & \text{if subject is female}\\
+\end{cases}\]
+We could also have a transformed response variable 
+\[\ln Y_i = \beta_0 + \beta_1X_{i1} + \beta_2X_{i2} + \epsilon_i\]
+Now we want to be able to ask questions about our models adequacy and which regressors are important. To do this, we can conduct various hypothesis tests which also require that our random errors are independent and identically distributed from a normal distribution with mean $E(\epsilon_i) = 0$, and variance $\Var(\epsilon_i) = \sigma^2$.
+
+\subsection{Testing for Significance of Regression}
+
+The test for \textbf{significance of regression} is to determine if there is a linear relationship between the repsonse $Y$ and any of the regressors $x_1, \ldots, x_k$. The approriate hypotheses are 
+\[H_0: \beta_1 = \beta_2 = \cdots = \beta_k = 0, \ H_1: \beta_j \neq 0\]
+for \emph{at least one} value of $j$. Rejection of the null hypothesis implies \emph{at least one} of the regressors contribute signficantly to the model. The test is a generalization of the anaylsis of variance used in simple regression. We define the sum of squares the same way,
+\[SST = SSR + SSE\]
+If the null hypothesis is true, then $SSR/\sigma^2 \sim \chi_k^2$, where $k$ is the number of regressors in the model ($p-1$). Similarly, $SSE/\sigma^2 \sim \chi^2_{n-k-1}$ if the null hypothesis holds and it can be shown that $SSR/sigma^2$ is independent of $SSE/\sigma^2$. We then use an $F$ statistic 
+\[F_0 = \frac{SSR/k}{SSR/(n-k-1)} = \frac{MSR}{MSE} \sim F_{k,n-k-1}\]
+which follows an $F$ distribution. Then, we reject the null hypothesis $H_0: \beta_1 = \beta_2 = \cdots = \beta_k = 0$ if 
+\[F_0 > F_{\alpha, k, n-k-1}\]
+We can construct an analysis of variance table to summarize this procedure again. 
+\begin{center}
+    \begin{tabular}{|c|c|c|c|c|}
+        \hline
+        Source of Variation & Sum of Squares & DF & Mean Square & $F$-statistic\\
+        \hline
+        \hline
+        Regression & SSR & $k$ & MSR & $MSR/MSE$\\
+        Residuals & SSE & $n-k-1$ & MSE & \\
+        Total & SST & $n-1$ & & \\
+        \hline
+    \end{tabular}
+\end{center}
+The \textbf{total sum of squares} is 
+\[SST = \sum_{i=1}^n Y_i^2 -  \frac{1}{n}\left(\sum_{i=1}^n Y_i\right)^2 = Y'Y - \frac{1}{n}\left(\sum_{i=1}^n Y_i\right)\]
+The \textbf{regression sum of squares} is 
+\[SSR = \hat{\beta}'X'Y -\frac{1}{n}\left(\sum_{i=1}^n Y_i\right)\]
+The \textbf{residual sum of squares} is 
+\[SSE = Y'Y - \hat{\beta}'X'Y = Y'(I - H)Y\]
+We can show that $Y'J_{n}Y = \left(\sum_{i=1}^n Y_i\right)^2$ where $J_n$ is the matrix with 1 in every entry
+\begin{align*}
+    Y'J_nY &= \begin{bmatrix}
+        Y_1 & \cdots & Y_n
+    \end{bmatrix} \begin{bmatrix}
+        1 & \cdots & 1\\
+        \vdots & \ddots \ \vdots \\
+        1 & \cdots & 1
+    \end{bmatrix}\begin{bmatrix}
+        Y_1 \\ \vdots \\ Y_n
+    \end{bmatrix} \\
+    &= \begin{bmatrix}
+        \sum Y_i & \cdots \sum Y_i 
+    \end{bmatrix}\begin{bmatrix}
+        Y_1 \\ \vdots \\ Y_n
+    \end{bmatrix}\\
+    &= Y_1 \sum_{i=1}^n Y_i + Y_2 \sum_{i=1}^n Y_i + \cdots + Y_n\sum_{i=1}^n Y_i\\
+    &= \sum_{i=1}^n Y_i (Y_1 + Y_2 + \cdots + Y_n)\\
+    &= \left(\sum_{i=1}^n Y_i\right) \left(\sum_{i=1}^n Y_i\right)\\
+    &= \left(\sum_{i=1}^n Y_i\right)^2
+\end{align*}
+
+Thus we can write 
+\begin{align*}
+    SST &= \sum_{i=1}^n Y_i^2 - \frac{1}{n}\left(\sum_{i=1}^n Y_i\right)^2\\
+    &= Y'Y - \frac{1}{n}Y'J_nY\\
+    &= Y' \left(Y - \frac{1}{n}J_nY\right)\\
+    &= Y' \left(I - \frac{1}{n}J_n\right)Y
+\end{align*}
+It can be shown easily that we can write the regression sum of squares in terms of this matrix $J_n$ 
+\[SSR = Y'\left(H - \frac{1}{n}J_n\right)Y\]
+
+\subsection{Tests on Individual Regression Coefficients}
+
+Once we have determined that at least one of the regressors is significant, we can investigate which one (or more) is significant. Adding a varialbe to the model always causes the regression sum of squares to increase and the residual sum of squares to decrease. So we must decie whter the increase in $SSR$ is sufficient to warrant using an additional regressor. The added regressor also increases the variance for the fitted value $\hat{y}$, so we must be careful to add only regressors that are signficant. Adding an unimportant regressor can increase the mean square error, which can decrease the usefulness of the model.\\
+
+To test an individual regression coefficient, say $\beta_j$, we use the test 
+\[H_0: \beta_j = 0, \ H_1: \beta_j \neq 0\]
+If the null hypothesis is not rejected, then we can remove the corresponding regressor $x_j$. The \textbf{test statistic} for this hypothesis is 
+\[t_0 = \frac{\hat{\beta}_j}{\sqrt{\hat{\sigma^2}C_{jj}}} = \frac{\hat{B}_j}{se(\hat{\beta}_j)}\]
+Where $C_{jj}$ is the diagonal element of the matrix $(X'X)^{-1}$ corresponding to $\beta_j$. We reject the null hypothesis if
+\[|t_0| > t_{\alpha/2, n-k-1}\]
+\subsection{Extra Sum of Squares Principle}
+
+We may also directly determine the contribution to the regression sum of squares of a regressor, say $x_j$, by using the \textbf{extra sum of squares method.} This procedure can also be used to investigate the contribution of a subset of the regressor variables. \\
+
+Consider the regression model with $k$ regressors, 
+\[Y = X\beta + \epsilon\]
+where $Y$ is $n\times 1$, $X$ is $n\times p$, $\beta$ is $p\times 1$, and $\epsilon$ is $n \times 1$ with $p = k+1$. We want to determine if some subset of $r < k$ regressors contribute signficantly to our model. We will partition the regression coefficients into 2 vectors, $\beta_1$ is a $(p-r) \times 1$ vector, and $\beta_2$ is the $r \times 1$ vector of coefficients we are trying to test. We want to test the following hypotheses
+\[H_0: \beta_2 = 0, \ H_1: \beta_2 \neq 0\]
+
+So our model will be rewritten as
+\[Y = X\beta + \epsilon = X_1\beta_1 + X_2\beta_2 + \epsilon\]
+where $X_1$ is a $n \times (p-r)$ matrix that are the columns of $X$ associated with $\beta_1$, and $X_2$ is an $n \times r$ matrix with the columns of $X$ associated with $\beta_2$. This is our \textbf{full model}.\\
+
+For the full model, we have established that 
+\[\hat{\beta} = (X'X)^{-1}X'Y\]
+and the regression sum of squares is 
+\[SSR(\beta) = \hat{\beta}'X'Y\]
+which has $k = p-1$ degrees of freedom. We also have the residual mean square 
+\[MSE = \frac{Y'Y - \hat{\beta}'X'Y}{n-p} = \frac{SSE}{n-p}\]
+
+To find the contribution of the regressors in $\beta_2$, we fit the model assuming the null hypothesis $H_0: \beta_2 = 0$ is true. This gives us the \textbf{reduced model}
+\[Y = X_1\beta_1 + \epsilon\]
+\noindent
+The least squares estimator for $\beta_1$ in the reduced model is 
+\[\hat{\beta}_1 = (X_1'X_1)^{-1}X_1'Y\]
+The regression sum of squares is 
+\[SSR(\beta_1) = \hat{\beta_1}'X_1'Y\]
+which has $k-r = p - 1 - r$ degrees of freedom. The regression sum of squares due to $\beta_2$ given that $\beta_1$ is already in the model is 
+\[SSR(\beta_2 | \beta_1) = SSR(\beta) - SSR(\beta_1)\]
+with $(p-1) - (p - 1 -r) = r$ degrees of freedom. This sum of squares is called the \textbf{extra sum of squares due to $\beta_2$}  because it measures the increase in the regression sum of squares that results from adding $x_{k-r +1}, x_{k-r + 2}, \ldots, x_{k}$ to the model with $x_1,x_2, \ldots, x_{k-r}$. Now we have the extra sum of squares due to $\beta_2$ is independent of mean square error, so the null hypothesis $\beta_2=0$ can be tested with the following statistic,
+\[F_0 = \frac{SSR(\beta_2|\beta_1)/r}{MSE}\]
+ If $F_0 > F_{\alpha, r, n-p}$, then we reject the null hypothesis and conclude that at least one of the parameters in $\beta_2$ is not zero, and at least one of the regressors in $X_2$ contributes signficantly to the regression model. This is sometimes called a \textbf{partial $F$ test} since it measures the contribution of regressors in $X_2$ given that $X_1$ is in the model.
+
+ \subsection{Testing the General Linear Hypothesis}
+
+ Suppose that the null hypothesis we want to test is $H_0: T\beta = 0$ where $T$ is an $r \times p$ matrix such that only $r$ of the $p$ equations in $T\beta = 0$ are independent. That is, the rows are the independent equations and will yield a $r \times 1$ vector of coefficients we'd like to test. Recall the $\beta$ is a $p\times 1$ vector. The \textbf{full model} stays the same, with $Y = X\beta + \epsilon$ and $\hat{\beta} = (X'X)^{-1}X'Y$, and the residual sum of squares is 
+ \[SSE(FM) = Y'Y - \hat{\beta}'X'Y\]
+ which has $n-p$ degrees of freedom. To obtain the \textbf{reduced model}, the $r$ independent equations in $T\beta = 0$ are used to solve for $r$ of the regression coefficients in the full model in terms of the $p-r$ regression coefficient. This gives us the reduced model 
+ \[Y = Z\gamma + \epsilon\]
+ where $Z$ is an $n \times (p-r)$ matrix, and $\gamma$ is a $(p-r) \times 1$ vector of the unknown regression coefficients. The estimator for $\gamma$ is 
+ \[\hat{\gamma} = (Z'Z)^{-1}Z'Y\]
+ and the residual sum of squares is 
+ \[SSE(RM) = Y'Y - \hat{\gamma}Z'Y\]
+ which as $n - p + r$ degrees of freedom. The reduced model has less parameters than the full model so $SSE(RM) \geq SSE(FM)$. Now to test the hypothesis $H_0: T\beta = 0$, we use the difference in residual sum of squares, denoted by $SSH$,
+ \[SSH = SSE(RM) - SSE(FM)\]
+ which has $n-p + r - (n - p) = r$ degrees of freedom. This is known as the sum of squares due to the hypothesis. The test statistic here is then 
+ \[F_0 = \frac{SSH/r}{SSE(FM)/n-p} \sim F_{r, n-p}\]
+ We reject $H_0$ if $F_0 > F_{\alpha, r, n-p}$.\\
+
+\section{Lack of Fit of the Regression Model}
+
+Sometimes, we want to test whether or not our linear model is justified at all. This is different from testing if the slope is 0.
+
+\subsection{Test for Lack of Fit}
+
+Suppose we have $n_i$ observations on the response at the $i$th level of the regressor $x_i$ for $i = 1, 2, \ldots, m$. Let $y_{ij}$ denote the $j$th ($j = 1,2,\ldots, n_i)$ observation on the corresponding response variable. In total, there are 
+\[n = \sum_{i=1}^m n_i\]
+observations. We partition the residual sum of squares 
+\[SSE = SS_{PE} + SS_{LOF}\]
+Where $SS_{PE}$ is the sum of squares due to \textbf{pure error}  and $SS_{LOF}$ is the sum of squares due to \textbf{lack of fit}. Note that we can parition $SSE$ using the following, 
+\[y_{ij} - \hat{y}_i = (y_{ij} - \bar{y}_i) + (\bar{y}_i - \hat{y}_i)\]
+$\bar{y}_i$ is the average from the $n_i$ observations at $x_i$, then we can square and sum both sides of the equation to give us 
+\[\sum_{i=1}^m \sum_{j=1}^{n_i} (y_{ij} - \hat{y}_i)^2 = \sum_{i=1}^m \sum_{j=1}^{n_i}(y_{ij} - \bar{y}_i)^2 + \sum_{i=1}^m \sum_{j=1}^{n_i}(\bar{y}_i - \hat{y}_i)^2\]
+This gives us that the pure error sum of squares is 
+\[SS_{PE} =\sum_{i=1}^m \sum_{j=1}^{n_i} (y_{ij} - \bar{y}_i)^2\]
+Since there are $n_i - 1$ degrees of freedom for pure error at each level $x_i$ that gives us the total degrees of freedom for $SS_{PE}$ as 
+\[\sum_{i=1}^m (n_i - 1) = n-m\]
+The sum of squares due to lack of fit is 
+\[SS_{LOF} = \sum_{i=1}^m n_i(\bar{y}_i - \hat{y}_i)^2\]
+This is a weighted sum of squared deviations between the mean response $\bar{y}_i$ at each level $x_i$ with its corresponding fitted value $\hat{y}_i$. If the fitted values are close to the average responses, then there is a strong indication the regression function is linear. There are $m-2$ degrees of freedom for $SS_{LOF}$ since there are $m$ levels and 2 degrees are reserved for estimating the 2 parameters $\beta_0, \beta_1$ to compute $\hat{y}_i$. This gives us our test statistic 
+\[F^* = \frac{SS_{LOF} / (m-2)}{SS_{PE} / (n-m)} = \frac{MS_{LOF}}{MS_{PE}}\]
+The expected value for $MS_{PE}$ is $\sigma^2$, and for $MS_{LOF}$ it is 
+\[E(MS_{LOF}) = \sigma^2 + \frac{\sum_{i=1}^n n_i \left[E(y_i) - \beta_0 - \beta_1x_i\right]^2}{m-2}\]
+If the regression function is linear, then $E(y_i) = \beta_0 + \beta_1x_i$ so $E(MS_{LOF})$ is $\sigma^2$. So, we construct our hypotheses as 
+\[H_0: E(y_i) = \beta_0 + \beta_1x_i, \ H_1: E(y_i) \neq \beta_0 + \beta_1x_i\]
+and we reject the null hypothesis if $F^* > F_{\alpha, m-2, n-m}$. We can summarize these in another analysis of variance table,
+\begin{center}
+    \begin{tabular}{|c|c|c|c|c|c|}
+        \hline
+        Source & Sum of Squares & DF & Mean Square & F\\
+        \hline 
+        \hline 
+        Regression & $SSR = \sum\limits_{i=1}^m\sum\limits_{j=1}^{n_i} (y_{ij} - \hat{y}_i)^2$ & 1 & $SSR/1$ & $MSR/MSE$ \\
+        \hline
+        Residuals & $SSE(R) = \sum\limits_{i=1}^m\sum\limits_{j=1}^{n_i}(y_{ij} - \hat{y}_i)^2$ & $n-2$ & $SSE(R)/n-2$ & \\
+        \hline
+        Lack of Fit & $SS_{LOF} = \sum\limits_{i=1}^m n_i(\bar{y}_i - \hat{y}_i)^2$ & $m-2$ & $SS_{LOF}/m-2$ & $MS_{LOF}/MS_{PE}$\\
+        \hline
+        Pure Error & $SS_{PE} = \sum\limits_{i=1}^m\sum\limits_{j=1}^{n_i} (y_{ij}-\bar{y}_i)^2$ & $n-m$ & $SS_{PE}/n-m$ & \\
+        \hline
+        Total & $\sum\limits_{i=1}^m\sum\limits_{j=1}^{n_i}(y_{ij} - \bar{y})^2$ & $n-1$ & & \\
+        \hline
+    \end{tabular}
+\end{center}
+It may be also useful to note that 
+\[E(SS_{LOF}) = \sigma^2 + \frac{\sum_{i=1}^m n_i(E(y_i) - \beta_0 - \beta_1x_i)^2}{m-2}\]
+and $E(SS)_{LOF} = \sigma^2$ when we fail to reject the null hypothesis $H_0: E(y_i) = \beta_0 + \beta_1x$, since the second term becomes 0, and 
+\[E(SS_{PE}) = \sigma^2\] 
