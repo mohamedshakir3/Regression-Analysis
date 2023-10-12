@@ -383,7 +383,7 @@ label={[anchor=west, fill=green]north west:\textbf{#1:}},
             Reject the null hypothesis when $F^* > F_{\alpha, m-2, n-m}$.
         \end{bluebox}\\[-2ex]
     \end{blackbox}
-    \renewcommand{\arraystretch}{2}
+    \renewcommand{\arraystretch}{1.5}
     \begin{blackbox}{Anova Table for Lack of Fit}
         \begin{center}
             \begin{tabular}{|c|c|c|}
@@ -403,7 +403,8 @@ label={[anchor=west, fill=green]north west:\textbf{#1:}},
                 \hline
             \end{tabular}
         \end{center}
-        \begin{center}
+        \renewcommand{\arraystretch}{1.5}
+        \begin{center}            
             \begin{tabular}{|c|c|c|}
                 \hline
                 Source & Mean Square = SS/df & $F$-Statistic\\
@@ -419,10 +420,28 @@ label={[anchor=west, fill=green]north west:\textbf{#1:}},
                 \hline
             \end{tabular}
         \end{center}
-        It may be also useful to note that 
-        \[E(SS_{LOF}) = \sigma^2 + \frac{\sum_{i=1}^m n_i(E(y_i) - \beta_0 - \beta_1x_i)^2}{m-2}\]
-        and $E(SS_{LOF}) = \sigma^2$ when we fail to reject the null hypothesis $H_0: E(y_i) = \beta_0 + \beta_1x$, since the second term becomes 0, and 
-        \[E(SS_{PE}) = \sigma^2\] 
+    \end{blackbox}
+    \begin{blackbox}{Model Adequacy}
+        \begin{pinkbox}{Normaility}
+            
+                \begin{itemize}[leftmargin=7pt]
+                    \item \textbf{Using a boxplot:} Box plot of residuals should be symmetric around a median of 0.
+                    \item \textbf{Histogram:} Should be of the shape of a normal distribution.
+                    \item \textbf{QQ-Plot:} Plot $E_k = \sqrt{MSE}\cdot\Phi^{-1}\left(\frac{k-0.375}{n + 0.25}\right)$ vs the residuals $e_{(k)}$, should be a straight line.
+                \end{itemize}
+        \end{pinkbox}
+        \begin{redbox}{Constant Variance}
+            Studentize the residuals, and plot $\sqrt{e_i^*}$ vs $\hat{Y}_i$.\\[-0.25ex]
+            \[e_i^* = \frac{e_i}{\sqrt{MSE(1-h_{ii})}}\]
+            
+            \begin{itemize}[leftmargin=7pt]
+                \item Plot should show a random distribution of points. Otherwise, signs of non-constant variance.
+                \item Residuals lie in a narrow band around 0 $\implies$ no need of correction.
+                \item Residuals are increasing or decreasing $\implies$ variance is non constant.
+                \item Double-bow pattern $\implies$ variance in the middle is larger than the variance at the extremes.
+                \item Quadratic relationship (parabola shape) $\implies$ maybe a nonlinear relationship
+            \end{itemize}
+        \end{redbox}\\[-2ex]
     \end{blackbox}
     \begin{blackbox}{Confidence Intervals}
         \begin{pinkbox}{Confidence Intervals on Regression Coefficients}
