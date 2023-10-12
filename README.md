@@ -1,3 +1,3 @@
 # Regression Analysis Notes
 
-Link: https://mohamedshakir3.github.io/MAT-3375-Notes/main.pdf
+Link: https://mohamedshakir3.github.io/Regression-Analysis/main.pdf

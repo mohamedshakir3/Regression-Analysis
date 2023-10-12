@@ -268,7 +268,7 @@ To test an individual regression coefficient, say $\beta_j$, we use the test
 If the null hypothesis is not rejected, then we can remove the corresponding regressor $x_j$. The \textbf{test statistic} for this hypothesis is 
 \[t_0 = \frac{\hat{\beta}_j}{\sqrt{\hat{\sigma}^2C_{jj}}} = \frac{\hat{\beta}_j}{se(\hat{\beta}_j)}\]
 Where $C_{jj}$ is the diagonal element of the matrix $(X'X)^{-1}$ corresponding to $\beta_j$. We reject the null hypothesis if
-\[|t_0| > t_{\alpha/2, n-(k-1)}\]
+\[|t_0| > t_{\alpha/2, n-k-1}\]
 \subsection{Extra Sum of Squares Principle}
 
 We may also directly determine the contribution to the regression sum of squares of a regressor, say $x_j$, by using the \textbf{extra sum of squares method.} This procedure can also be used to investigate the contribution of a subset of the regressor variables. \\
