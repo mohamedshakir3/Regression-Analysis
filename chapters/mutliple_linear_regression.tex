@@ -204,8 +204,8 @@ The test for \textbf{significance of regression} is to determine if there is a l
 \[H_0: \beta_1 = \beta_2 = \cdots = \beta_k = 0, \ H_1: \beta_j \neq 0\]
 for \emph{at least one} value of $j$. Rejection of the null hypothesis implies \emph{at least one} of the regressors contribute signficantly to the model. The test is a generalization of the anaylsis of variance used in simple regression. We define the sum of squares the same way,
 \[SST = SSR + SSE\]
-If the null hypothesis is true, then $SSR/\sigma^2 \sim \chi_k^2$, where $k$ is the number of regressors in the model ($p-1$). Similarly, $SSE/\sigma^2 \sim \chi^2_{n-k-1}$ if the null hypothesis holds and it can be shown that $SSR/sigma^2$ is independent of $SSE/\sigma^2$. We then use an $F$ statistic 
-\[F_0 = \frac{SSR/k}{SSR/(n-k-1)} = \frac{MSR}{MSE} \sim F_{k,n-k-1}\]
+If the null hypothesis is true, then $SSR/\sigma^2 \sim \chi_k^2$, where $k$ is the number of regressors in the model ($p-1$). Similarly, $SSE/\sigma^2 \sim \chi^2_{n-k-1}$ if the null hypothesis holds and it can be shown that $SSR/\sigma^2$ is independent of $SSE/\sigma^2$. We then use an $F$ statistic 
+\[F_0 = \frac{SSR/k}{SSE/(n-k-1)} = \frac{MSR}{MSE} \sim F_{k,n-k-1}\]
 which follows an $F$ distribution. Then, we reject the null hypothesis $H_0: \beta_1 = \beta_2 = \cdots = \beta_k = 0$ if 
 \[F_0 > F_{\alpha, k, n-k-1}\]
 We can construct an analysis of variance table to summarize this procedure again. 
@@ -266,9 +266,9 @@ Once we have determined that at least one of the regressors is significant, we c
 To test an individual regression coefficient, say $\beta_j$, we use the test 
 \[H_0: \beta_j = 0, \ H_1: \beta_j \neq 0\]
 If the null hypothesis is not rejected, then we can remove the corresponding regressor $x_j$. The \textbf{test statistic} for this hypothesis is 
-\[t_0 = \frac{\hat{\beta}_j}{\sqrt{\hat{\sigma^2}C_{jj}}} = \frac{\hat{B}_j}{se(\hat{\beta}_j)}\]
+\[t_0 = \frac{\hat{\beta}_j}{\sqrt{\hat{\sigma}^2C_{jj}}} = \frac{\hat{\beta}_j}{se(\hat{\beta}_j)}\]
 Where $C_{jj}$ is the diagonal element of the matrix $(X'X)^{-1}$ corresponding to $\beta_j$. We reject the null hypothesis if
-\[|t_0| > t_{\alpha/2, n-k-1}\]
+\[|t_0| > t_{\alpha/2, n-(k-1)}\]
 \subsection{Extra Sum of Squares Principle}
 
 We may also directly determine the contribution to the regression sum of squares of a regressor, say $x_j$, by using the \textbf{extra sum of squares method.} This procedure can also be used to investigate the contribution of a subset of the regressor variables. \\
@@ -300,8 +300,18 @@ which has $k-r = p - 1 - r$ degrees of freedom. The regression sum of squares du
 \[SSR(\beta_2 | \beta_1) = SSR(\beta) - SSR(\beta_1)\]
 with $(p-1) - (p - 1 -r) = r$ degrees of freedom. This sum of squares is called the \textbf{extra sum of squares due to $\beta_2$}  because it measures the increase in the regression sum of squares that results from adding $x_{k-r +1}, x_{k-r + 2}, \ldots, x_{k}$ to the model with $x_1,x_2, \ldots, x_{k-r}$. Now we have the extra sum of squares due to $\beta_2$ is independent of mean square error, so the null hypothesis $\beta_2=0$ can be tested with the following statistic,
 \[F_0 = \frac{SSR(\beta_2|\beta_1)/r}{MSE}\]
- If $F_0 > F_{\alpha, r, n-p}$, then we reject the null hypothesis and conclude that at least one of the parameters in $\beta_2$ is not zero, and at least one of the regressors in $X_2$ contributes signficantly to the regression model. This is sometimes called a \textbf{partial $F$ test} since it measures the contribution of regressors in $X_2$ given that $X_1$ is in the model.
+ If $F_0 > F_{\alpha, r, n-p}$, then we reject the null hypothesis and conclude that at least one of the parameters in $\beta_2$ is not zero, and at least one of the regressors in $X_2$ contributes signficantly to the regression model. This is sometimes called a \textbf{partial $F$ test} since it measures the contribution of regressors in $X_2$ given that $X_1$ is in the model.\\
 
+ If we want to compute the regression squares for multiple variables, say 
+ \[SSR(\beta_2| \beta_1, \beta_0)\]
+ We compute it in the following way 
+ \[SSR(\beta_2 | \beta_1, \beta_0) = SSR(\beta_2, \beta_1,\beta_0) - SSR(\beta_1,\beta_0) = SSR(\beta_1, \beta_2| \beta_0) - SSR(\beta_1|\beta_0)\]
+ We can partition the regression sum of squares into marginal single degree of freedom components. For example, consider the model
+ \[y = \beta_0 + \beta_1x_1 + \beta_2x_2 + \beta_3x_3 + \epsilon\]
+ We can use the following identity, 
+ \[SST = SSR(\beta_1, \beta_2, \beta_3 | \beta_0) + SSE\]
+ We can then decompose the three degree of freedom regression sum of squares as
+ \[SSR(\beta_1, \beta_2,\beta_3| \beta_0) = SSR(\beta_1,\beta_0) + SSR(\beta_2 | \beta_1, \beta_0) + SSR(\beta_3| \beta_2, \beta_1,\beta_0)\]
  \subsection{Testing the General Linear Hypothesis}
 
  Suppose that the null hypothesis we want to test is $H_0: T\beta = 0$ where $T$ is an $r \times p$ matrix such that only $r$ of the $p$ equations in $T\beta = 0$ are independent. That is, the rows are the independent equations and will yield a $r \times 1$ vector of coefficients we'd like to test. Recall the $\beta$ is a $p\times 1$ vector. The \textbf{full model} stays the same, with $Y = X\beta + \epsilon$ and $\hat{\beta} = (X'X)^{-1}X'Y$, and the residual sum of squares is 
@@ -395,3 +405,18 @@ This is an unbiased estimator for $E(y|x_0)$ since $E(\hat{y}_0) = x_0'\beta = E
 Thus our confidence interval for the mean response $E(y|x_0)$ is 
 \[\hat{y}_0 - t_{\alpha/2,n-p}\sqrt{\hat{\sigma}^2x_0'(X'X)^{-1}x_0} \leq E(y|x_0) \leq \hat{y}_0 + t_{\alpha/2,n-p}\sqrt{\hat{\sigma}^2x_0'(X'X)^{-1}x_0}\]
 \subsection{Simultaneous Confidence Intervals on Regression Coefficients}
+\begin{theorem}[Bonferroni Inequality]
+    For two events $A_1, A_2$, we have that 
+    \[P(A_1 \cup A_2) = P(A_1) + P(A_2) - P(A_1 \cap A_2) \leq P(A_1) + P(A_2)\]
+    From DeMorgan's identity, we also have 
+    \[P(A_1^c \cap A_2^c) = 1 - P(A_1 \cup A_2) \geq 1 - P(A_1) - P(A_2)\]
+    where $A_1^c$ is the complement of $A_1$.
+\end{theorem}
+\noindent
+If we define the events 
+\[A_1^c: \hat{\beta}_0 \pm t_{1-\alpha/2, n-2}s(\hat{\beta}_0)\]
+\[A_2^c: \hat{\beta}_1 \pm t_{1-\alpha/2, n-2}s(\hat{\beta}_1)\]
+where $s(\hat{\beta}_0)$,$s(\hat{\beta}_1)$ are the standard deviations of $\hat{\beta}_0$ and $\hat{\beta}_1$. So the event $(A_1^c \cap A_2^c)$ is the event that the intervals simultaneous cover $\beta_0$, $\beta_1$. From Bonforroni's Inequality, if we have $P(A_1) = P(A_2) = \alpha$, then 
+\[P(A_1^c \cap A_2^c) \geq 1 - P(A_1) - P(A-2) = 1 - 2\alpha\]
+In general, if we have $p$ parameters and each confidence interval has confidence, $1- \frac{\alpha}{p}$, then 
+\[P\left(\bigcap_{i=1}^p A_i^c\right) \geq 1 - p\frac{\alpha}{p} = 1 - \alpha\]

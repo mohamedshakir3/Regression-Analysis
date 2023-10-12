@@ -1,0 +1,466 @@
+\documentclass{article}
+\usepackage[landscape]{geometry}
+\usepackage{url}
+\usepackage{multicol}
+\usepackage{amsmath}
+\usepackage{esint}
+\usepackage{amsfonts}
+\usepackage{tikz}
+\usetikzlibrary{decorations.pathmorphing}
+\usepackage{amsmath,amssymb}
+\usepackage{listings}
+\usepackage{colortbl}
+\usepackage{xcolor}
+\usepackage{mathtools}
+\usepackage{amsmath,amssymb}
+\usepackage{enumitem}
+\usepackage{environ}
+\makeatletter
+
+\newcommand*\bigcdot{\mathpalette\bigcdot@{.5}}
+\newcommand*\bigcdot@[2]{\mathbin{\vcenter{\hbox{\scalebox{#2}{$\m@th#1\bullet$}}}}}
+\makeatother
+
+\title{}
+\usepackage[brazilian]{babel}
+\usepackage[utf8]{inputenc}
+
+\advance\topmargin-.8in
+\advance\textheight3in
+\advance\textwidth3in
+\advance\oddsidemargin-1.5in
+\advance\evensidemargin-1.5in
+\parindent0pt
+\parskip2pt
+\newcommand{\hr}{\centerline{\rule{3.5in}{1pt}}}
+%\colorbox[HTML]{e4e4e4}{\makebox[\textwidth-2\fboxsep][l]{texto}
+
+
+\definecolor{blue}{HTML}{A7BED3}
+\definecolor{brown}{HTML}{DAB894}
+\definecolor{pink}{HTML}{FFCAAF}
+
+
+\DeclareMathOperator{\Unif}{Unif}
+\DeclareMathOperator{\Var}{Var}
+\DeclareMathOperator{\Cov}{Cov}
+\DeclareMathOperator{\Bern}{Bernoulli}
+\DeclareMathOperator{\Bin}{Bin}
+\DeclareMathOperator{\Pois}{Poisson}
+\DeclareMathOperator{\atanh}{arctanh}
+
+
+
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{definition}{Definition}[section]
+\newtheorem{fact}{Fact}[section]
+\newtheorem{prop}{Proposition}[section]
+\newtheorem{corollary}{Corollary}[section]
+
+
+
+
+
+\tikzset{header/.style={path picture={
+\fill[green, even odd rule, rounded corners]
+(path picture bounding box.south west) rectangle (path picture bounding box.north east) 
+([shift={( 2pt, 4pt)}] path picture bounding box.south west) -- 
+([shift={( 2pt,-2pt)}] path picture bounding box.north west) -- 
+([shift={(-2pt,-4pt)}] path picture bounding box.north east) -- 
+([shift={(-6pt, 6pt)}] path picture bounding box.south east) -- cycle;
+},
+label={[anchor=west, fill=green]north west:\textbf{#1:}},
+}} 
+
+\tikzstyle{mybox} = [draw=black, fill=white, very thick,
+    rectangle, rounded corners, inner sep=10pt, inner ysep=10pt]
+\tikzstyle{fancytitle} =[fill=black, text=white, rounded corners, font=\bfseries]
+
+
+\tikzstyle{bluebox} = [draw=blue, fill=white, very thick,
+    rectangle, rounded corners, inner sep=10pt, inner ysep=10pt]
+\tikzstyle{bluetitle} =[fill=blue, inner sep=4pt, text=white, font=\small]
+
+
+\tikzstyle{brownbox} = [draw=brown, fill=white, very thick,
+    rectangle, rounded corners, inner sep=10pt, inner ysep=10pt]
+\tikzstyle{browntitle} =[fill=brown, inner sep=4pt, text=white, font=\small]
+
+\tikzstyle{pinkbox} = [draw=pink, fill=white, very thick,
+    rectangle, rounded corners, inner sep=10pt, inner ysep=10pt]
+\tikzstyle{pinktitle} =[fill=pink, inner sep=4pt, text=white, font=\small]
+
+\tikzstyle{redbox} = [draw=red!35, fill=white, very thick,
+    rectangle, rounded corners, inner sep=10pt, inner ysep=10pt]
+\tikzstyle{redtitle} =[fill=red!35, inner sep=4pt, text=white, font=\small]
+
+
+\NewEnviron{brownbox}[1]{
+    \begin{tikzpicture}
+    \node[brownbox](box){%
+    \begin{minipage}{0.9\textwidth}
+    \BODY
+    \end{minipage}};
+    \node[browntitle, right=10pt] at (box.north west) {#1};
+    \end{tikzpicture}
+}
+
+ \NewEnviron{redbox}[1]{
+    \begin{tikzpicture}
+    \node[redbox](box){%
+    \begin{minipage}{0.9\textwidth}
+    \BODY
+    \end{minipage}};
+    \node[redtitle, right=10pt] at (box.north west) {#1};
+    \end{tikzpicture}
+}
+   
+    
+
+\NewEnviron{bluebox}[1]{%
+\begin{tikzpicture}
+    \node[bluebox](box){%
+        \begin{minipage}{0.9\textwidth}
+            \BODY
+        \end{minipage}
+    };
+    
+\node[bluetitle, right=10pt] at (box.north west) {#1};
+\end{tikzpicture}
+}
+
+\NewEnviron{pinkbox}[1]{%
+\begin{tikzpicture}
+    \node[pinkbox](box){%
+        \begin{minipage}{0.9\textwidth}
+            \BODY
+        \end{minipage}
+    };
+    
+\node[pinktitle, right=10pt] at (box.north west) {#1};
+\end{tikzpicture}
+}
+
+
+
+\NewEnviron{blackbox}[1]{%
+\begin{tikzpicture}
+    \node[mybox](box){%
+        \begin{minipage}{0.3\textwidth}
+        \raggedright
+        \small{
+            \BODY
+        }
+        \end{minipage}
+    };
+    
+\node[fancytitle, right=10pt] at (box.north west) {#1};
+\end{tikzpicture}
+}
+
+
+\begin{document}
+
+\begin{center}{\large{\textbf{Simple Linear Regression}}}\\
+\end{center}
+
+
+
+
+\begin{multicols*}{3}
+
+    \begin{blackbox}{Parameters}
+        The simple model is \\[-3ex]
+        \[y_i = \beta_0 + \beta_1x_i\]
+        with $E(y_i) = \beta_0 + \beta_1x_i$,$\Var(y_i) = \Var(\beta_0 + \beta_1x_i + \epsilon) = \sigma^2$
+        \begin{redbox}{Estimates for $\beta_0$, $\beta_1$}
+            \[\hat{\beta_1}= \frac{\sum_{i=1}^n(x_i - \bar{x})y_i}{\sum_{i=1}^n (x_i - \bar{x})^2} = \sum_{i=1}^n k_iy_i = \frac{S_{xx}}{S_{xy}}\]
+            \[\hat{\beta_0} = \bar{y} - \hat{\beta_1}\bar{x}\]
+            \[k_i = \frac{x_i - \bar{x}}{\sum_{i=1}^n(x_i - \bar{x})^2}\]
+            \[S_{xx} = \sum_{i=1}^n (x_i - \bar{x})^2\]
+            \[S_{xy} = \sum_{i=1}^n y_i(x_i - \bar{x})\]
+            \[\Var(\hat{\beta_1}) = \sigma^2\sum_{i=1}^nk_i^2\]
+        \end{redbox}
+        \begin{bluebox}{Estimation on $\sigma^2$}
+            \[SSE = \sum_{i=1}^ne_i^2 = (y_i-\hat{y}_i)^2\]
+            $SSE$ has $n-2$ degrees of freedom.
+            \[\hat{\sigma}^2 = \frac{SSE}{n-2} = MSR\]
+        \end{bluebox}\\[-2ex]
+    \end{blackbox}
+    \begin{blackbox}{Hypothesis Testing}
+        Testing on the slope for a constant $\beta$
+        \[H_0: \hat{\beta}_1 = \beta, \ H_1: \hat{\beta}_1 \neq \beta\]
+        If $\sigma^2$ is known,\\[-4ex]
+        \[Z_0 = \frac{\hat{\beta}_1 - \beta}{\sqrt{\sigma^2/S_{xx}}}\]
+        If $\sigma^2$ is unknown,\\[-4ex]
+        \[t_0 = \frac{\hat{\beta_1} - \beta}{\sqrt{MSE/S_{xx}}}\]
+        We reject the null hypothesis $|t_0| > t_{\alpha/2, n-2}$. We test the intercept similarly,\\[-2ex]
+        \[H_0: \beta_0 = \beta, \ H_1: \beta_1 \neq \beta\]
+        \[t_0 = \frac{\beta_0 -  \beta}{se(\hat{\beta}_0)}\]
+        where $se(\hat{\beta}_0) = \sqrt{\frac{MSE}{S_{xx}}}$
+    \end{blackbox}
+    \begin{blackbox}{Significance of Regression}
+        We test signficance with 
+        \[H_0: \beta_1 = 0, \ H_1: \beta_1 \neq 0\]
+        Using the same statistic, $|t_0| > t_{\alpha/2, n-2}$. 
+        \renewcommand{\arraystretch}{1.5}
+        \begin{center}
+            \begin{tabular}{|c|c|c|}
+                \hline
+                Source & SS & DF \\
+                \hline
+                \hline
+                Regression & $SSR = \hat{\beta}_1^2\sum(X_i-\bar{X})^2$ & $p-1$ \\
+                \hline
+                Error & $SSE=\sum(Y_i - \hat{Y}_i)^2$ & $n-p$\\
+                \hline 
+                Total & $SSTO =\sum(Y_i - \bar{Y})^2$ & $n-1$\\
+                \hline
+            \end{tabular}
+        \end{center}
+        \begin{center}
+            \begin{tabular}{|c|c|c|}
+                \hline
+                MS=SS/df & E(MS) & F\\
+                \hline
+                \hline
+                MSR & $\sigma^2 + \beta_1^2\sum(X_i - \bar{X})^2$ & $MSE/MSR$\\
+                \hline
+                MSE &  $\sigma^2$ &\\
+                \hline 
+            \end{tabular}
+        \end{center}
+    \end{blackbox}
+    \begin{blackbox}{Confidence Intervals}
+        The confidence interval on the slope $\beta_1$,\\[-1ex]
+        \[\hat{\beta}_1 - t_{\alpha/2, n-2}se(\hat{\beta}_1) \leq \hat{\beta}_1 \leq \hat{\beta}_1 + t_{\alpha/2, n-2}se(\hat{\beta}_1)\]
+        For the intercept $\beta_0$,\\[-1ex]
+        \[\hat{\beta}_0 - t_{\alpha/2, n-2}se(\hat{\beta}_0) \leq \hat{\beta}_0 \leq \hat{\beta}_0 + t_{\alpha/2, n-2}se(\hat{\beta}_0)\]
+        For $\sigma^2$, \\[-4ex]
+        \[\frac{(n-2)MSE}{\chi^2_{\alpha/2, n-2}} \leq \sigma^2 \leq \frac{(n-2)MSE}{\chi^2_{1-\alpha/2, n-2}}\]
+        \begin{brownbox}{Interval Estimation on Mean Response}
+            An unbiased estimator for $E(y|x_0)$ for a value of regressor $x=x_0$ is 
+            \[\widehat{E(y|x_0)} = \hat{\mu}_{y|x_0} = \hat{\beta_0} + \hat{\beta_1}x_0\]
+            The variance is 
+            \[\Var(\hat{\mu}_{y|x_0}) = \frac{\sigma^2}{n} + \frac{\sigma^2(x_0-\bar{x})^2}{S_{xx}}\]
+            The sampling distribution for 
+            \[\frac{\hat{\mu}_{y|x_0} - E(y|x_0)}{\sqrt{MSE(1/n + (x_0-\bar{x})^2/S_{xx})}} \sim t_{n-2}\]
+            So the confidence interval is then 
+            \[\left[\hat{\mu}_{y|x_0} \pm t_{\alpha/2, n-2}\sqrt{MSE\left(\frac{1}{n} + \frac{(x_0 - \bar{x})^2}{S_{xx}}\right)} \right]\]
+        \end{brownbox}\\[-2ex]
+    \end{blackbox}
+    \begin{blackbox}{Correlation}
+        The coefficient of determination is 
+        \[R^2 = \frac{SSR}{SST} = 1 - \frac{SSE}{SST}\]
+        The pearson correlation coefficient is 
+        \[\rho = \frac{\Cov(X,Y)}{\sqrt{\Var(X)}\sqrt{\Var(Y)}}\]
+        When applied to a sample, 
+        \begin{align*}
+            r &= b_1\left(\frac{S_{xx}}{SST}\right)^{\frac{1}{2}}\\
+              &= \frac{\sum_{i=1}^n(X_i - \bar{X})(Y_i - \bar{Y})}{\sqrt{\sum_{i=1}^n (X_i - \bar{X})^2(Y_i - \bar{Y})^2}}\\
+              &= \frac{S_{xy}}{(S_{xx}SST)^{1/2}}  
+        \end{align*}
+        If we want to test $\rho = 0$, 
+        \[H_0: \rho = 0, \ H_1: \rho \neq 0\]
+        We use the $t$ statistic,
+        \[t = \frac{r\sqrt{n-2}}{\sqrt{1-r^2}} \sim t_{n-2}\]
+        We reject the null hypothesis $H_0: \rho = 0$ if $|t_0| > t_{\alpha/2, n-2}$. To test $\rho = \rho_0$, 
+        \[H_0: \rho = \rho_0, \ H_1: \rho \neq \rho_0\]
+        Use the $Z$ statistic, 
+        \[Z = \atanh r = \frac{1}{2}\ln\left(\frac{1+r}{1-r}\right) \sim N\left(\mu_z, \frac{1}{n-3}\right)\]
+        where 
+        \[\mu_z = \frac{1}{2}\ln\left(\frac{1+\rho}{1-\rho}\right)\]
+        Then we standardize it to test 
+        \[Z_0 = (\atanh(r) - \atanh(\rho_0))\sqrt{n-3}\]
+        We can obtain our confidence interval with 
+        \[\left[\tanh\left(\atanh(r) \pm \frac{Z_{\alpha/2}}{\sqrt{n-3}}\right)\right]\]
+        where $\tanh(u) = (e^u-e^{-u})/(e^u + e^{-u})$. We reject $H_0: \rho = \rho_0$ if $|Z_0| > Z_{\alpha/2}$.
+    \end{blackbox}
+\end{multicols*}
+
+\begin{center}{\large{\textbf{Multiple Linear Regression}}}\\
+\end{center}
+
+\begin{multicols*}{3}
+    \begin{blackbox}{Model}
+        We write the multiple linear regression model as 
+        \[Y = X\boldsymbol{\beta} + \boldsymbol{\epsilon}\]
+        where (Note $p = k+1$.) 
+        \renewcommand{\arraystretch}{1.25}
+        \[Y = \begin{bmatrix}
+            y_1\\y_2\\\vdots\\y_n
+        \end{bmatrix}, X = \begin{bmatrix}
+            1 & x_{11} & \cdots & x_{1k}\\
+            1 & x_{21} & \cdots & x_{1k}\\
+            \vdots & \vdots & \ddots & \vdots\\
+            1 & x_{11} & \cdots & x_{1k}\\
+        \end{bmatrix} \]
+        \[\boldsymbol{\beta} = \begin{bmatrix}
+            \beta_0 \\\beta_1\\\vdots\\ \beta_k
+        \end{bmatrix}, \boldsymbol{\epsilon} = \begin{bmatrix}
+            \epsilon_1 \\ \epsilon_2 \\ \vdots \\ \epsilon_n
+        \end{bmatrix}\]
+        $Y$ is $n \times 1$, $X$ is $n\times p$, $\boldsymbol{\beta}$ is $p\times 1$, and $\boldsymbol{\epsilon}$ is $n \times 1$. 
+        In matrix form, we get the fitted line 
+        \[\hat{Y} = X\boldsymbol{\hat{\beta}} = X(X'X)^{-1}X'Y = HY\]
+        $H =  X(X'X)^{-1}X'$ is the \textbf{hat matrix}.
+        \begin{bluebox}{Properties of the Hat Matrix}
+            \begin{enumerate}[label=(\alph*)]
+                \item $H$ is a projection matrix, so it is idempotent and symmetric $HH = H$, $H' = H$.
+                \item The matrix $H$ is orthogonal to the matrix $I - H$, so $(I - H)H = H - HH = 0$.
+                Moreover, $(I-H)$ is idempotent and a project matrix as well.
+                \item The vector of residuls is \\[-2ex]
+                \[\boldsymbol{e} = Y - \hat{Y} = Y - HY = (I-H)Y\]
+                \item $Y$ is projected onto a space spanned by the columns of $H$, and the residuals are in an orthogonal space.\\[-2ex]
+                \[Y = HY + (I-H)Y\]
+            \end{enumerate}
+        \end{bluebox}
+        \begin{redbox}{Estimation of $\sigma^2$}
+            Residual sum of squares is \\[-2ex]
+            \[SSE = \sum_{i=1}^n e_i^2 = \boldsymbol{e'e} = Y'Y - \boldsymbol{\hat{\beta}}'X'Y\]
+            $SSE$ has $n-p$ degrees of freedom, then MSE is 
+            \[\hat{\sigma}^2 = MSE = \frac{SSE}{n-p}\]
+        \end{redbox}\\[-2ex]
+    \end{blackbox}
+    \begin{blackbox}{Estimation and Hypothesis Testing}
+        \begin{brownbox}{Testing for Significance}
+            We test for significance with 
+            \[H_0: \beta_1 = \beta_2 = \cdots = \beta_k = 0, \ H_1: \beta_j \neq 0\]
+            Rejecting the null hypothesis means at least one regressor contributed signficantly. We use an $F$ statistc 
+            \[F_0 = \frac{SSR/k}{SSE/(n-p)} = \frac{MSR}{MSE} \sim F_{k, n-p}\]
+            We reject the null hypothesis when $F_0 > F_{\alpha, k,n-k-1}$.
+        \end{brownbox}
+        The \textbf{total sum of squares} is 
+        \[SST = \sum_{i=1}^n Y_i^2 -  \frac{1}{n}\left(\sum_{i=1}^n Y_i\right)^2 = Y'Y - \frac{1}{n}\left(\sum_{i=1}^n Y_i\right)\]
+        The \textbf{regression sum of squares} is 
+        \[SSR = \hat{\beta}'X'Y -\frac{1}{n}\left(\sum_{i=1}^n Y_i\right)\]
+        The \textbf{residual sum of squares} is 
+        \[SSE = Y'Y - \hat{\beta}'X'Y = Y'(I - H)Y\]
+        We can also write $SST$ and $SSR$ in terms of the $J_n$, and $n\times n$ matrix with 1's.
+        \[SST = Y' \left(I - \frac{1}{n}J_n\right)Y\]
+        \[SSR = Y'\left(H - \frac{1}{n}J_n\right)Y\]
+        \begin{bluebox}{Tests on Individual Coefficients}
+            To test an indivual coefficient $\beta_j$, we use
+            \[H_0: \beta_j = 0, \ H_1: \beta_j \neq 0\]
+            The test statistic is \\[-1ex]
+            \[t_0 = \frac{\hat{\beta}_j}{\sqrt{\sigma}^2C_{jj}} = \frac{\hat{\beta_j}}{se(\hat{\beta}_j)}\]
+            Where $C_{jj}$ is the diagonal entry of $(X'X)^{-1}$. We reject $H_0$ when $|t_0| > t_{\alpha/2, n-p}$.
+        \end{bluebox}
+        If we fail to reject the null hypothesis, we can remove the corresponding regressor $x_j$ from the model.
+    \end{blackbox}
+    \begin{blackbox}{Extra Sum Of Squares}
+        We want to partition $r$ of the $k$ regressors to test \\[-2ex]
+        \[H_0: \beta_2 = 0, H_1: \beta_2 \neq 0\]
+        $Y = X\beta + \epsilon$,where $Y$ is $n\times 1$, $X$ is $n\times p$, $\beta$ is $p\times 1$, and $\epsilon$ is $n \times 1$ with $p = k+1$.
+        \begin{redbox}{Full Model}
+            \[Y = X\beta + \epsilon = X_1\beta_1 + X_2\beta_2 + \epsilon\] 
+            $X_1$ is $n \times (p-r)$, $X_2$ is $n\times r$.\\[-2ex]
+           \[\hat{\beta} = (X'X)^{-1}X'Y, \ SSR(\beta) = \hat{\beta}'X'Y\]
+           which has $k = p-1$ degrees of freedom.
+        \end{redbox}
+        \begin{brownbox}{Reduced Model}
+            To test regressors in $\beta_2$, fit the model assuming $H_0: \beta_2 = 0$ is true. \\[-3ex]
+            \[Y = X_1\beta_1 + \epsilon\]
+            \[\hat{\beta}_1 = (X_1'X_1)^{-1}X_1'Y, \ SSR(\beta_1) = \hat{\beta_1}'X_1'Y\]
+            which has $k-r = p - 1 - r$ degrees of freedom. The sum of squares due to $\beta_2$ given that $\beta_1$ is already in the model is \\[-3ex]
+            \[SSR(\beta_2 | \beta_1) = SSR(\beta) - SSR(\beta_1)\]
+        \end{brownbox}
+            
+        The null hypothesis $\beta_2=0$ can be tested with (partial $F$-test)\\[-4ex]
+        \[F_0 = \frac{SSR(\beta_2|\beta_1)/r}{MSE}\]
+        If $F_0 > F_{\alpha, r, n-p}$, then we reject the null hypothesis and conclude that at least one regressor in $X_2$ contributes.\\
+    \end{blackbox}
+    \begin{blackbox}{Lack of Fit}
+        \textbf{Pure Error Sum of Squares:}\\[-2ex]
+        \[SS_{PE} = \sum_{i=1}^m\sum_{j=1}^{n_i}(y_{ij} - \bar{y}_i)^2\]
+        \textbf{Sum of Squares Due to Lack of Fit:}\\[-2ex]
+        \[SS_{LOF} = \sum_{i=1}^m n_i(\bar{y} - \hat{y}_i)\]
+        \textbf{$F$-Statistic:}\\[-2ex]
+        \[F^* = \frac{SS_{LOF}/(m-2)}{SS_{PE}(n-m)} = \frac{MS_{LOF}}{MS_{PE}}\]
+        \begin{bluebox}{Testing Lack of Fit}
+            If the regression is linear, then $E(y_i) = \beta_ + \beta_1x_i$, \\[-1ex]
+            \[H_0: E(y_i) = \beta_0 + \beta_1x_i, \ H_1: E(y_i) \neq \beta_0 + \beta_1x_i\]
+            Reject the null hypothesis when $F^* > F_{\alpha, m-2, n-m}$.
+        \end{bluebox}\\[-2ex]
+    \end{blackbox}
+    \renewcommand{\arraystretch}{2}
+    \begin{blackbox}{Anova Table for Lack of Fit}
+        \begin{center}
+            \begin{tabular}{|c|c|c|}
+                \hline
+                Source & Sum of Squares & DF\\
+                \hline 
+                \hline 
+                Regression & $SSR = \sum\limits_{i=1}^m\sum\limits_{j=1}^{n_i} (y_{ij} - \hat{y}_i)^2$ & 1\\
+                \hline
+                Residuals & $SSE(R) = \sum\limits_{i=1}^m\sum\limits_{j=1}^{n_i}(y_{ij} - \hat{y}_i)^2$ & $n-2$ \\
+                \hline
+                Lack of Fit & $SS_{LOF} = \sum\limits_{i=1}^m n_i(\bar{y}_i - \hat{y}_i)^2$ & $m-2$ \\
+                \hline
+                Pure Error & $SS_{PE} = \sum\limits_{i=1}^m\sum\limits_{j=1}^{n_i} (y_{ij}-\bar{y}_i)^2$ & $n-m$ \\
+                \hline
+                Total & $\sum\limits_{i=1}^m\sum\limits_{j=1}^{n_i}(y_{ij} - \bar{y})^2$ & $n-1$  \\
+                \hline
+            \end{tabular}
+        \end{center}
+        \begin{center}
+            \begin{tabular}{|c|c|c|}
+                \hline
+                Source & Mean Square = SS/df & $F$-Statistic\\
+                \hline 
+                \hline 
+                Regression & $SSR/1$ & $MSR/MSE$ \\
+                \hline
+                Residuals & $SSE(R)/n-2$ & \\
+                \hline
+                Lack of Fit & $SS_{LOF}/m-2$ & $MS_{LOF}/MS_{PE}$\\
+                \hline
+                Pure Error & $SS_{PE}/n-m$ & \\
+                \hline
+            \end{tabular}
+        \end{center}
+        It may be also useful to note that 
+        \[E(SS_{LOF}) = \sigma^2 + \frac{\sum_{i=1}^m n_i(E(y_i) - \beta_0 - \beta_1x_i)^2}{m-2}\]
+        and $E(SS_{LOF}) = \sigma^2$ when we fail to reject the null hypothesis $H_0: E(y_i) = \beta_0 + \beta_1x$, since the second term becomes 0, and 
+        \[E(SS_{PE}) = \sigma^2\] 
+    \end{blackbox}
+    \begin{blackbox}{Confidence Intervals}
+        \begin{pinkbox}{Confidence Intervals on Regression Coefficients}
+            To construct a confidence interval on $\beta_j$, use the statistic 
+            \[\frac{\hat{\beta_j} - \beta_j}{\sqrt{\hat{\sigma}^2 C_{jj}}} \sim t_{n-p}\]
+            The CI is then
+            \[\hat{\beta}_j - t_{\alpha/2,n-p}\sqrt{\hat{\sigma}^2C_{jj}} \leq \beta_j \leq \hat{\beta}_j - t_{\alpha/2,n-p}\sqrt{\hat{\sigma}^2C_{jj}}\]
+            Recall $C_{jj}$ is the $j$th diagonal entry of $(X'X)^{-1}$ the standard error is 
+            \[se(\hat{\beta}_j) = \sqrt{\hat{\sigma}^2C_{jj}}\]
+        \end{pinkbox}
+        \begin{brownbox}{Confidence Interval on Mean Response}
+            To construct confidence intevrals at points $x_{01}, x_{02}, \ldots, x_{0k}$, define 
+            \renewcommand{\arraystretch}{1}
+            \[x_0 = \begin{bmatrix}
+                1 & x_{01} & x_{02} & \cdots & x_{0k}
+            \end{bmatrix}^T\]
+            The fitting value is then 
+            \[\hat{y}_0 = x_0'\hat{\beta}\]
+            This is an unbiased estimator, $E(y|x_0) = x_0'\beta=E(\hat{y}_0)$, and $\Var(\hat{y}_0) = \sigma^2x_0'(X'X)^{-1}x_0$. The CI is then 
+            \[\left[\hat{y}_0 \pm t_{\alpha/2,n-p}\sqrt{\hat{\sigma}^2x_0'(X'X)^{-1}x_0}\right]\]
+        \end{brownbox}
+        \begin{redbox}{Simultaneous Confidence Interval}
+            \textbf{Theorem} (Bonferroni Inequality). \textit{
+                For two events $A_1, A_2$, we have that\\[-2ex]
+                \[P(A_1 \cup A_2) \leq P(A_1) + P(A_2)\]
+                From DeMorgan's identity, we also have \\[-2ex]
+                \[P(A_1^c \cap A_2^c) = 1 - P(A_1 \cup A_2) \geq 1 - P(A_1) - P(A_2)\]
+            }
+            \noindent
+            If we define the events \\[-2ex]
+            \[A_1^c: \hat{\beta}_0 \pm t_{1-\alpha/2, n-2}s(\hat{\beta}_0)\]
+            \[A_2^c: \hat{\beta}_1 \pm t_{1-\alpha/2, n-2}s(\hat{\beta}_1)\]
+            From Bonforroni's Inequality, if we have $P(A_1) = P(A_2) = \alpha$, then \\[-2ex]
+            \[P(A_1^c \cap A_2^c) \geq 1 - P(A_1) - P(A-2) = 1 - 2\alpha\]
+            In general, if we have $p$ parameters and each confidence interval has confidence, $1- \frac{\alpha}{p}$, then \\[-2ex]
+            \[P\left(\bigcap_{i=1}^p A_i^c\right) \geq 1 - p\frac{\alpha}{p} = 1 - \alpha\]
+        \end{redbox}\\[-2ex]
+    \end{blackbox}
+    
+\end{multicols*}
+\end{document}

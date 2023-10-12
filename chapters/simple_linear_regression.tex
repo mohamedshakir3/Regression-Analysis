@@ -55,7 +55,7 @@ We also sometimes use a more compact notation, by denoting the corrected sum of 
 So, we can write 
 \[b_1 = \frac{S_{xy}}{S_{xx}}\]
 The observed difference between $Y_i$ and the corresponding fitted value $\hat{Y}_i$ is a residual. The $i$th residual is 
-\[e_i = y_i - \hat{y}_i = y_i - (b_0 + b_1x_i\]
+\[e_i = y_i - \hat{y}_i = y_i - (b_0 + b_1x_i)\]
 Note that $k_i$ has important properites, such as 
 \[\sum_{i=1}^n k_i = 0, \ \sum_{i=1}^n k_iX_i = 1,\ \sum_{i=1}^n k_i^2 = \frac{1}{\sum_{i=1}^n (X_i - \bar{X})^2}\]
 \begin{align*}
@@ -239,7 +239,7 @@ and we reject the null hypothesis when $|t_0| > t_{\alpha/2, n-2}$.
 \subsection{Testing Significance}
 
 A special case for hypotheses is 
-\[H_0: B_1 = 0, \ H_1: B_1 \neq 0\]
+\[H_0: \beta_1 = 0, \ H_1: \beta_1 \neq 0\]
 
 These hypotheses relate to the \textbf{significance of regression}. Failing to reject the null hypothesis means there is no linear relationship between $x$ and $y$, we would reject the null hypothesis when $|t_0| > t_{\alpha/2, n-2}$. 
 
@@ -368,3 +368,5 @@ where
 Now we can standardize our statistic to obtain a standard normal test statistic
 \[Z_0 = (\atanh(r) - \atanh(\rho_0))\sqrt{n-3}\]
 We can obtain our confidence interval with 
+\[\tanh\left(\atanh(r) - \frac{Z_{\alpha/2}}{\sqrt{n-3}}\right) \leq \rho \leq \tanh\left(\atanh(r) + \frac{Z_{\alpha/2}}{\sqrt{n-3}}\right)\]
+where $\tanh(u) = (e^u-e^{-u})/(e^u + e^{-u})$.
