@@ -174,7 +174,7 @@ label={[anchor=west, fill=green]north west:\textbf{#1:}},
         \[y_i = \beta_0 + \beta_1x_i\]
         with $E(y_i) = \beta_0 + \beta_1x_i$,$\Var(y_i) = \Var(\beta_0 + \beta_1x_i + \epsilon) = \sigma^2$
         \begin{redbox}{Estimates for $\beta_0$, $\beta_1$}
-            \[\hat{\beta_1}= \frac{\sum_{i=1}^n(x_i - \bar{x})y_i}{\sum_{i=1}^n (x_i - \bar{x})^2} = \sum_{i=1}^n k_iy_i = \frac{S_{xx}}{S_{xy}}\]
+            \[\hat{\beta_1}= \frac{\sum_{i=1}^n(x_i - \bar{x})y_i}{\sum_{i=1}^n (x_i - \bar{x})^2} = \sum_{i=1}^n k_iy_i = \frac{S_{xy}}{S_{xx}}\]
             \[\hat{\beta_0} = \bar{y} - \hat{\beta_1}\bar{x}\]
             \[k_i = \frac{x_i - \bar{x}}{\sum_{i=1}^n(x_i - \bar{x})^2}\]
             \[S_{xx} = \sum_{i=1}^n (x_i - \bar{x})^2\]
@@ -195,9 +195,9 @@ label={[anchor=west, fill=green]north west:\textbf{#1:}},
         If $\sigma^2$ is unknown,\\[-4ex]
         \[t_0 = \frac{\hat{\beta_1} - \beta}{\sqrt{MSE/S_{xx}}}\]
         We reject the null hypothesis $|t_0| > t_{\alpha/2, n-2}$. We test the intercept similarly,\\[-2ex]
-        \[H_0: \beta_0 = \beta, \ H_1: \beta_1 \neq \beta\]
+        \[H_0: \beta_0 = \beta, \ H_1: \beta_0 \neq \beta\]
         \[t_0 = \frac{\beta_0 -  \beta}{se(\hat{\beta}_0)}\]
-        where $se(\hat{\beta}_0) = \sqrt{\frac{MSE}{S_{xx}}}$
+        where $se^2(\hat{\beta}_1) = \frac{MSE}{S_{xx}}$, $se^2(\hat{\beta}_0) = MSE(1/n + \bar{X}^2/S_{xx})$
     \end{blackbox}
     \begin{blackbox}{Significance of Regression}
         We test signficance with 
