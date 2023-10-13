@@ -1,0 +1,116 @@
+
+\chapter{Transformations and Weighting to Correct Models}
+
+When constructing a regression model, recall that we are making a few assumption
+
+\begin{enumerate}
+    \item The error terms $\epsilon_i$ are normally distributed with mean 0 and variance $\sigma^2N(0,\sigma)^2$, and 
+    \item The error terms are independent and uncorrelated.
+\end{enumerate} 
+
+In this chapter, the objective is to study methods of building regression models when these assumptions are violated.   
+
+\section{Variance Stabilizing Transformations}
+
+The assumption of constant various is one of the requirements for the regression model. This assumption is commonaly violated when the response $y$ has the various that is functionally related to its mean. For common distributions and functional relationships, we can summairze their useful variance-stabilizing relationships.
+
+\renewcommand{\arraystretch}{1.5}
+\begin{center}
+    \begin{tabular}{|c|c|}
+        \hline
+        Relationship of $\sigma^2$ to $E(y)$ & Transfromation \\
+        \hline
+        $\sigma^2 \propto$ constant & $y' = y$ (No transformation)\\
+        $\sigma^2 \propto E(y)$ & $y' = \sqrt{y}$ (Poisson Data)\\
+        $\sigma^2 \propto E(y)[1-E(y)]$ & $y' = \sin^{-1}(\sqrt{y})$ (Binomial Data)\\
+        $\sigma^2 \propto E(y)^2$ & $y' = y^{-1/2}$\\ 
+        $\sigma^2 \propto E(y)^4$ & $y' = y^{-1}$ \\
+        \hline
+    \end{tabular}
+\end{center}
+
+
+In the case of the Poisson distribution, the variance is equal to the mean. So it would be useful to transformation the data. If $y \sim \Pois(\lambda)$, then $\sqrt{y}$ is nearly normally disributed with variance approximately $1/4$ if the mean $\lambda$ is large.\\
+
+If we have bionmial variable $y \sim \Bin(n,p)$ with mean $m = np$, then we apply the transformation 
+\[y' = \sin^{-1}\left(\sqrt{\frac{y + c}{n + 2c}}\right)\]
+The optimal value of $c$ is $3/8$ when $m$ and $n-m$ are large. The variance is approximately $\frac{1}{4}\left(n+\frac{1}{2}\right)^{-1}$.
+
+\section{Transformations to Linearize the Model}
+
+Another assumption in our regression model is that the relationship between $y$ and the regressors is linear. Sometimes, prior experience or theoretical considerations may indicate that the relationship between $y$ and the regressors is not linear, but may be able to be linearized by using a suitable transformation. These models are known as \textbf{intrinsically} or \textbf{transformably lineaer}.\\[1ex]
+\indent
+Conisder the exponential function, 
+\[y = \beta_0e^{\beta_1x}\epsilon\]
+we can transform this model using logarithms to get 
+\[y' = \ln y = \ln \beta_0 + \beta_1X + \ln \epsilon = \beta_0' + \beta_1x + \epsilon'\]
+This transformation required that the new error terms $\epsilon' = \ln \epsilon$ still satisfy our assumptions, namely that they are normally and independently distributed with mean 0 and variance $\sigma^2$. \\ 
+\noindent
+Various types of reciprocal transformations can also be used, for example 
+\[y = \beta_0 + \beta_1\frac{1}{x}+\epsilon\]
+This can be linearized using a \textbf{reciprocal transformation} for $x' = \frac{1}{x}$ to give us  
+\[y = \beta_0 + \beta_1x' + \epsilon\]
+Other models can be linearized by reciprocal transformations such as 
+\[\frac{1}{y} = \beta_0 + \beta_1x + \epsilon\]
+using the transformation $y' = \frac{1}{y}$, and 
+\[y = \frac{x}{\beta_0 + \beta_1x}\]
+can be linearized with 2 reciprocal transsformations. First, 
+\[y' = \frac{1}{y}\]
+then 
+\[x' = \frac{1}{x}\]
+This gives us 
+\[y'= \beta_0x' + \beta_1\]
+
+\subsection{Box-Cox Transformations}
+
+Another useful class of transformations when the data appears to be non-normal or non-constant variance is the \textbf{power transformation} $y^\lambda$, where $\lambda$ is a parameter to be determined. Box and Cox show how the parameters of the regression model and $\lambda$ can be estimated simultaneously using the method of maximum likelihood. The appropriate procedure is to use 
+\[y^{(\lambda)} = \begin{cases}
+    \frac{y^\lambda - 1}{\lambda \dot{y}^{\lambda-1}} & \lambda \neq 0\\
+    \dot{y}\ln y & \lambda = 0
+\end{cases}\]
+Where $\dot{y}$ is the geometric mean of the observations,
+\[\dot{y} = \ln^{-1}\left(\frac{1}{n}\sum_{i=1}^n \ln y_i\right)\]
+Then we fit the model 
+\[y^{(\lambda)} = X\boldsymbol{\beta} + \boldsymbol{\epsilon}\]
+The divisor $\dot{y}^{\lambda-1}$ turns out to be related to the Jacobian of the transformation coverting the response $y$ into $y^{(\lambda)}$. The value of $\lambda$ is usually determined by trial and error and selecting the value for $\lambda$ which minimizes the residual sum of squares. We can also construct confidence intervals on $\lambda$. 
+
+\section{Generalized and Weighted Least Squares}
+
+Linear models that do not satisfy the constant error variance assumption can be fitted by the method of \textbf{weighted least squares} to give us constant verious. The idea is to multiply the deviation between the observed and expected value of $y_i$ by a \textbf{weight}, $w_i$, chosen to be inversely proportional to the variance of $y_i$. In the case of simple linear regression, we'd have 
+\[Q(\beta_0, \beta_1) = \sum_{i=1}^n w_ie_i^2 = \sum_{i=1}^n w_i(y_i - \beta_0 - \beta_1x_i)^2\]
+The resulting normal equations from the weighted least squares are 
+\[\hat{\beta}_0 \sum_{i=1}^n w_i + \hat{\beta}_i \sum_{i=1}^n w_ix_i = \sum_{i=1}^n w_iy_i\]
+\[\hat{\beta}_0 \sum_{i=1}^n w_ix_i+ \hat{\beta}_i \sum_{i=1}^n w_ix_i^2 = \sum_{i=1}^n w_ix_iy_i\]
+This model will satisfy that $\Var(\sqrt{w_i}\epsilon_i) = \sigma^2$. We may choose different weights depending on the situation, for example we could choose $w_i = \sqrt{x_i}$, or $w = \sqrt{y}$. Another common approach is to preform the usual regression and to esitmate the variance with the sample variance $s_i^2$ for each $y_i$, then 
+\[w_i = \frac{1}{s_i^2}\]
+\subsection{Weighted Least Squares}
+We can define the matrix 
+\[W = \begin{bmatrix}
+    w_1 & 0 & \cdots & 0 \\
+    0 & w_2 & \cdots & 0\\
+    \vdots & \vdots & \ddots & 0\\
+    0 & 0 & \cdots & w_n
+\end{bmatrix}\]
+Where $\sigma^2W^{-1}$ is the covariance matrix of $\epsilon$. From the weighted least sqaures normal equations, we get 
+\[(X'WX)\boldsymbol{\hat{\beta}} = X'WY\]
+This is the multiple linear regression version of the same normal equations given in the simple linear regression model, then we can solve it to get 
+\[\boldsymbol{\hat{\beta}} = (X'WX)^{-1}X'WY\]
+$\boldsymbol{\hat{\beta}}$ is the \textbf{weighted least-sqaures estimator}. If we multiply each of the observed values for the $i$th observations (including the intercept) by the sequare root of the weights for the corresponding observations, we transform our data to get
+\renewcommand{\arraystretch}{1.5}
+\[X_W = \begin{bmatrix}
+    1\sqrt{w_1} & x_{11}\sqrt{w_1} & \cdots & x_{1k}\sqrt{w_1}\\
+    1\sqrt{w_2} & x_{21}\sqrt{w_2} & \cdots & x_{2k}\sqrt{w_2}\\
+    \vdots & \vdots & \ddots & \vdots\\
+    1\sqrt{w_n} & x_{n1}\sqrt{w_n} & \cdots & x_{nk}\sqrt{w_n}\\
+\end{bmatrix}, Y_W = \begin{bmatrix}
+    y_1\sqrt{w_1}\\
+    y_2\sqrt{w_2}\\
+    \vdots\\
+    y_n\sqrt{w_n}\\
+\end{bmatrix}\]
+The model now becomes 
+\[Y_W = X_W\boldsymbol{\beta} + \epsilon_W\]
+Then the weighted least squares estimate becomes 
+\[\boldsymbol{\hat{\beta}} = (X_W'X_W)^{-1}X_W'Y_W = (X'WX)^{-1}X'WY\]
+We also define the mean square error as 
+\[MSE_W = \frac{\sum_{i=1}^n w_i(y_1 - \hat{y}_i)^2}{n-p} = \frac{\sum_{i=1}^nw_ie_i^2}{n-p}\]
