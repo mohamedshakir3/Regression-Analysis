@@ -31,7 +31,7 @@ output:
   fig_caption: yes
 ---
 
-# Simple Linear Regression
+# Chapter 2 - Simple Linear Regression
 
 ## Example. Airfreight Data 
 
@@ -48,6 +48,7 @@ output:
  a) Compute the ANOVA table
  b) Compute the confidence intervals for the parameters 
  c) Compute the confidence interval on the average (mean) response when $X = 1$. 
+ d) What is the total variability in $y$ explained by this model?
 
 ## Solution. 
 
@@ -88,7 +89,7 @@ model <- lm(formula = y ~ x)
 print(model)
 anova(model)
 ```
-We can see that we get the same results and reach the same conclusion. 
+We can see that we get the same results and reach the same conclusion, and we also get the $p$-value which is very small and we can conclude from there as well that the regression is highly significant.
 
 ### Part b.
 
@@ -117,3 +118,261 @@ We can do this in R with
 ```{r}
 predict(model, newdata = data.frame(x=1), interval = 'confidence', level=0.95)
 ```
+
+### Part d. 
+
+The total variability in $y$ explained by the regressor $x$ is measured by the coefficient of determination 
+\[R^2 = \frac{SSR}{SST} = \frac{160}{177.6} = 0.9009\]
+We can also see this in the summary of the model in R
+
+```{r}
+summary(model)
+```
+The $R^2$ value is 0.9009.
+
+# Chatper 3 - Multiple Linear Regression 
+
+## Question 3.1
+
+Consider the National Football League data in Table B.1
+
+  a. Fit a multiple linear regression model relating the number of games won to the team's passing yardage ($x_2$), the percentage of rushing plays ($x_7$), and the opponents' yards rushing ($x_8$). 
+  b. Construct the analysis-of-variance table and test for significance of regression.
+  c. Calculate $t$ statistics for the hypotheses $H_0: \beta_2 = 0$, $H_0: \beta_7 = 0$, and $H_0: \beta_8 = 0$. What conclusions can you draw about the roles of variables in $x_2$, $x_7$, and $x_8$ play in the model?
+  d. Calculate $R^2$ and $R^2_{Adj}$ for this model.
+  e. Using the partial $F$ test, determine the contribution of $x_7$ to the model. How is the partial $F$ statistic related to the $t$ test for $\beta_7$ calculated in part c above?
+
+## Question 3.3
+Refer to problem 3.1
+\begin{enumerate}[label=\alph*.]
+  \item Find a 95\% CI for $\beta_7$. 
+  \item Find a 95\% CI on the mean number of games won by a team when $x_2 = 2300$, $x_7 = 56$, and $x_8 = 2100$.
+\end{enumerate}
+
+
+
+## Question 3.4
+
+Reconsider the National Football League data from Problem 3.1. Fit a model to these data using only $x_7$ and $x_8$ as regressors.
+\begin{enumerate}[label=\alph*.]
+  \item Test for significance of regression.
+  \item Calculate $R^2$ and $R^2_{Adj}$. How do these quantities compare to the value computed for the model in Problem 3.1, which included an additional regressor ($x_2$)?
+  \item Calculate a 95\% CI on $\beta_7$. Also find a 95\% CI on the mean number of games won by a team when $x_7 = 56$, and $x_8 = 2100$. Compare the lengths of these CIs to the lengths of the corresponding CIs from Problem 3.3.
+  \item What conclusions can you draw from this problem about the consequences of omitting an important regressor from a model?
+\end{enumerate}
+
+
+## Solutions.
+
+```{r, echo=FALSE, message=FALSE} 
+# Loading necessary libraries and preparing data for question 2.1.
+library(MPV)
+library(ggplot2)
+data(table.b1)
+tableb1 <- table.b1
+```
+
+## Question 3.1 
+
+### Part a. 
+We can fit a linear model using the same R function, 
+```{r}
+  # Table b1 was loaded ahead of time.
+  model <- lm(formula = y ~ x2 + x7 + x8, tableb1)
+  model
+```
+This gives us our linear model with the estimates $\hat{\beta}_0 = -1.808$, $\hat{\beta_2} = 0.00360$, $\hat{\beta}_7 = 0.194$, and $\hat{\beta}_8 = -0.00482$. 
+\[y = -1.808 + 0.00360x_2 + 0.194x_7 -0.00482x_8\]
+
+### Part b.
+
+We test for significance of regession using the hypotheses
+\[H_0: \beta_2 = \beta_7 = \beta_8 = 0, \ H_1: \beta_j \neq 0, j = 2,7,8\]
+We use the $F$-statistic
+\[F_0 = \frac{SSR/k}{SSE/(n-p)} = \frac{MSR}{MSE}\sim F_{k,n-p}\]
+We reject the null hypothesis when $F > F_{\alpha, k, n-k-1}$, we compute these values in R. In this case, we have $k=3$ regressors and coefficients, so $p = k+1 = 4$, thus
+
+```{r}
+n <- nrow(tableb1)
+anova(model)
+qf(0.05, 3, n-4, lower.tail=FALSE)
+```
+\begin{center}
+  \begin{tabular}{|c|c|c|c|c|c|}
+      \hline
+      Source & Sum of Squares & DF & MS & F & $P$ \\ 
+      \hline
+      $x_2$ & 76.193 & 1 & 76.193 &26.172  &$3.1 \cdot 10^{-5}$ \\
+      $x_7$ & 139.501 & 1 & 139.501 & 47.918 & $3.698 \cdot 10^{-7}$ \\
+      $x_8$ & 41.400 & 1 & 41.400 & 14.221 & 0.0009378\\
+      Residuals & 69.8790 & 24 & 2.911 & & \\
+      \hline
+  \end{tabular}
+\end{center}
+\[F_0 = \frac{SSR/k}{SSE/(n-p)} = \frac{(76.193 + 139.501 + 41.4)/3}{69.870/24} = 29.439\]
+
+We can also obtain the F-statistic from the summary of the model, 
+```{r}
+summary(model)
+```
+Therefore, we reject the null hypothesis $H_0: \beta_2 = \beta_7 = \beta_8 = 0$, and conclude our regression is significant.
+
+### Part c.
+
+We want to conduct tests on the indivudal coefficients, with the hypotheses $H_0: \beta_2 = 0$, $H_0: \beta_7 = 0$, and $H_0: \beta_8 = 0$. We need the $t$-statistic
+\[t_0 = \frac{\hat{\beta}_j}{se(\hat{\beta}_j)}\]
+We reject the null hypothesis when $|t_0| > t_{\alpha/2, n-p}$, 
+```{r}
+qt(0.025, n-4, lower.tail=FALSE)
+```
+We have all the information we need however in the summary of the model, we can see the estimate and the standard error for each coefficient, which tells us the $t$-value, but also the $t$-value is included. We can see that for all coefficents and their respective $t$-values, $|t_0| > t_{\alpha/2, n-p}$ so we reject all 3 of the null hypotheses.
+
+
+### Part d. 
+
+The $R^2$ value can be computed with 
+\[R^2 = \frac{SSR}{SST} = 1 - \frac{SSE}{SST} = \frac{76.193 + 139.501 + 41.4}{76.193 + 139.501 + 41.4 + 69.8790} = 0.7863\]
+We get these values from the ANOVA table above and also in the summaryof our model, we have $R^2 =0.7863$, and the adjusted $R^2$ value is 
+\[R^2_{Adj} = 1 - \frac{SSE/(n-k)}{SST/(n-1)} = 1 - \frac{68.8790/24}{326.973/27} = 0.7596\]
+This value is also in the summary R output above.
+
+
+### Part e. 
+
+To conduct the partial $F$ test to determine the contribution of $x_7$, we want to tes tthe hypotheses
+\[H_0: \beta_7 = 0, \ H_1: \beta_7 \neq 0\]
+We fit the model assuming the null hypothesis is true to get the reduced model and obtain the anova table,
+```{r}
+reduced_model <- lm(formula = y ~ x8 + x2, data=tableb1)
+anova(reduced_model)
+```
+Then, we want to use the $F$ statistic to test the hypotheses
+\[F_0 = \frac{SSR(\beta_7| \beta_2, \beta_0)/r}{MSE}\]
+So, we have 
+\[SRR(\beta_7|\beta_2, \beta_8) = SSR(\beta_7,\beta_2,\beta_8) - SSR(\beta_2, \beta_8) = 257.094 - (178.092 + 64.934) = 14.064\]
+Therefore,
+\[F_0 = \frac{SSR(\beta_7| \beta_2, \beta_8)}{MSE} = \frac{14.064}{2.911} \approx 4.831\]
+we reject the null hypothesis if $F_0 > F_{\alpha, r, n-p}$, 
+```{r}
+qf(0.05, 1, 24, lower.tail=FALSE)
+```
+We conclude that $x_7$ contributed significantly to this model. We also notice that the $F$ statistic is the square of the $t$ test used in part c.
+
+## Question 3.3 
+
+### Part a. 
+To consturct a confidence interval on $\beta_7$, we need to compute 
+\[\hat{\beta}_j - t_{\alpha/2,n-p}\sqrt{\hat{\sigma}^2C_{jj}} \leq \beta_j \leq \hat{\beta}_j - t_{\alpha/2,n-p}\sqrt{\hat{\sigma}^2C_{jj}}\]
+
+We have the standard error for $\beta_7$ from the previous summary output from R, so $se(\hat{\beta}_j) = \sqrt{\hat{\sigma}^2C_{jj}} = 0.088233$. Then, the $t$-value was also obtained earlier and we have $t_{\alpha/2, n-p} = 2.063899$, and the coefficient estimator $\hat{\beta_7} = 0.193960$. Therefore, the confidence interval is 
+\[0.193960 \pm 2.063899 \cdot(0.088233) = (0.011856, 0.376064)\]
+This can be also obtained in R 
+```{r}
+confint(model, "x7")
+```
+
+### Part b.
+
+The mean response at $x_2 = 2300$, $x_7 = 56$ and $x_8 = 2100$ is 
+
+\[y_0 = \beta_0 + \beta_2 (2300) + \beta_7 (56) + \beta_8 (2100) = 7.215188\]
+
+Then, the confidence interval on the mean response is 
+\[\left[\hat{y}_0 \pm t_{\alpha/2,n-p}\sqrt{\hat{\sigma}^2x_0'(X'X)^{-1}x_0}\right]\]
+This can be calculated in R with 
+
+```{r}
+predict(model, newdata=data.frame(x2 = 2300, x7 = 56, x8 = 2100),
+        interval = 'confidence', level=0.95)
+```
+
+## Question 3.4
+
+### Part a 
+We want to test the hypotheses for significance, 
+\[H_0: \beta_7 = \beta_8 = 0, \ H_1: \beta_j \neq 0, \ j = 7,8\]
+We can fit the model and get the anova table, 
+```{r}
+model <- lm(formula = y ~ x7 + x8, tableb1)
+anova(model)
+```
+We can see from the anova table that the regression is highly significant, but we can also use the $F$ test statistic, 
+\[F_0 = \frac{SSR/k}{SSE/(n-k-1)} = \frac{(97.238 + 81.828)/2}{147.898/25} = \frac{89.533}{5.916} = 15.134\]
+Then, we can compute $F_{\alpha, k, n-k-1}$, 
+```{r}
+qf(0.05, 3, 25, lower.tail=FALSE)
+```
+We can see that $F_0 > F_{\alpha, k, n-k-1}$ so we reject the null hypotheses that $H_0: \beta_7 = \beta_8 = 0$, and conclude that the regression is significant.
+
+### Part b.
+We can obtain a summary for the model and look at the $R^2$ and $R_{Adj}^2$ values similar to the previous questions.
+```{r}
+summary(model)
+```
+
+We get an R-squared value $R^2 = 0.5477$ and the adjusted R-squared is $R^2_{Adj} = 0.5115$, we can see that these values are lower than when we had $x_2$ in the model. So, the model with $x_2$ was able to better explain the variablity in $y$ and this suggests $x_2$ may have been contributing significantly to the model.
+
+### Part c.
+```{r}
+confint(model, "x7")
+```
+A 95\% confidence interval on $\beta_7$ is 
+\[(-0.1971643, 0.293906)\]
+
+```{r}
+new_data <- data.frame(x7 = 56, x8=2100)
+predict(model, newdata=new_data, interval='confidence', level=0.95)
+```
+Our 95\% confidence interval on the mean number of games one when $x_7 = 56$ and $x_8 = 2100$ is 
+\[(5.828643, 8.023842)\]
+We can see that the length of both confidence intervals are greater than when $x_2$ was included in the model. This suggests we were more confident with our estimates when $x_2$ was included.
+
+### d.
+
+We can conclude that omitting an important regressor ($x_2$) affected our estimates and standard error of coeffficients, resulting in larger lenghts in the confidence intervals and lower values for $R^2$.
+
+
+# Chapter 4 - Model Adequecy
+
+
+## Question 4.1
+
+Consider the simple regression model fit to the National Football League team performance data in Problem 2.1. (Same data as previous questions, with the model $y ~ x8$.
+
+\begin{enumerate}[label=\alph*.]
+  \item Construct a normal probability plot of the residuals. Does there seem to be any problem with the normality assumption? 
+  \item Construct an interpret a plot of the residuals versus the predicted repsonse. 
+  \item Plot the residuals versus the team passing yardage, $x_2$. DOes this plot indicate that the model will be improved by adding $x_2$ to the model?
+\end{enumerate}
+
+
+
+### Part a.
+```{r, out.width="90%"}
+library(ggplot2)
+model <- lm(formula = y ~ x8, tableb1)
+residuals <- residuals(model)
+qqnorm(residuals)
+qqline(residuals)
+```
+
+It appears that the normality assumption is fine since the standardized residuals closely follow the theoretical quantiles for a normal distribution as observered in the quantile-quantile plot. 
+
+### Part b.
+
+```{r, out.width="75%"}
+plot(fitted(model), residuals, main = "Residuals vs Fitted Value")
+abline(h=0, col = 'red')
+```
+
+The model appears to be adequate since the residuals vs fitted values appear to be randomly distributed around 0, showing no patterns. 
+
+### Part c.
+```{r, out.width="75%"}
+residuals <- residuals(model)
+plot(tableb1$x2, residuals, xlab="Passing Yardage",
+     ylab="Residuals", main="Residuals vs Team Passing Yardage")
+abline(h=0, col="red")
+```
+
+The model appears to be improved when adding $x_2$ since the residuals appear to be more close to 0.  
