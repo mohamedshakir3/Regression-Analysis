@@ -4,7 +4,7 @@
 When constructing a regression model, recall that we are making a few assumption
 
 \begin{enumerate}
-    \item The error terms $\epsilon_i$ are normally distributed with mean 0 and variance $\sigma^2N(0,\sigma)^2$, and 
+    \item The error terms $\epsilon_i$ are normally distributed with mean 0 and variance $\sigma^2$, and 
     \item The error terms are independent and uncorrelated.
 \end{enumerate} 
 
@@ -23,7 +23,8 @@ The assumption of constant various is one of the requirements for the regression
         $\sigma^2 \propto$ constant & $y' = y$ (No transformation)\\
         $\sigma^2 \propto E(y)$ & $y' = \sqrt{y}$ (Poisson Data)\\
         $\sigma^2 \propto E(y)[1-E(y)]$ & $y' = \sin^{-1}(\sqrt{y})$ (Binomial Data)\\
-        $\sigma^2 \propto E(y)^2$ & $y' = y^{-1/2}$\\ 
+        $\sigma^2 \propto E(y)^2$ & $y' = \ln(y)$\\
+        $\sigma^2 \propto E(y)^3$ & $y'= y^{-\frac{1}{2}}$\\
         $\sigma^2 \propto E(y)^4$ & $y' = y^{-1}$ \\
         \hline
     \end{tabular}
@@ -77,7 +78,7 @@ The divisor $\dot{y}^{\lambda-1}$ turns out to be related to the Jacobian of the
 \section{Generalized and Weighted Least Squares}
 
 Linear models that do not satisfy the constant error variance assumption can be fitted by the method of \textbf{weighted least squares} to give us constant verious. The idea is to multiply the deviation between the observed and expected value of $y_i$ by a \textbf{weight}, $w_i$, chosen to be inversely proportional to the variance of $y_i$. In the case of simple linear regression, we'd have 
-\[Q(\beta_0, \beta_1) = \sum_{i=1}^n w_ie_i^2 = \sum_{i=1}^n w_i(y_i - \beta_0 - \beta_1x_i)^2\]
+\[Q(\beta_0, \beta_1) = \sum_{i=1}^n w_i\epsilon_i^2 = \sum_{i=1}^n w_i(y_i - \beta_0 - \beta_1x_i)^2\]
 The resulting normal equations from the weighted least squares are 
 \[\hat{\beta}_0 \sum_{i=1}^n w_i + \hat{\beta}_i \sum_{i=1}^n w_ix_i = \sum_{i=1}^n w_iy_i\]
 \[\hat{\beta}_0 \sum_{i=1}^n w_ix_i+ \hat{\beta}_i \sum_{i=1}^n w_ix_i^2 = \sum_{i=1}^n w_ix_iy_i\]

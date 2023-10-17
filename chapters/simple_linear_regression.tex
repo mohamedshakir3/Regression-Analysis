@@ -341,6 +341,23 @@ The sampling distribution for
 is a $t$ distribution with $n-2$ degrees of freedom. Then the CI is given as 
 \[\left[\hat{\mu}_{y|x_0} \pm t_{\alpha/2, n-2}\sqrt{MSE\left(\frac{1}{n} + \frac{(x_0 - \bar{x})^2}{S_{xx}}\right)} \right]\]
 
+
+\section{Prediction of New Observations}
+
+When we want to predict a new value for our regressor variable, say $x=x_0$, we obtain a point estimate for the response $y$, given as 
+\[\hat{y}_0 = \hat{\beta_0} + \hat{\beta_1}x_0\]
+Now we want to obtain an interval estimate for our new observation $y_0$ and conduct hypothesis tests. Note that the confidence interval for the mean response at $x=x_0$ is \textbf{not} the same. We define the new random error variable 
+\[\psi = y_0 - \hat{y}_0\]
+which is normally distributed with mean zero and variance 
+\[\Var(\psi) = \Var(y_0 - \hat{y}_0) = \sigma^2\left(1+\frac{1}{n} + \frac{(x_0-\bar{x})^2}{S_{xx}}\right)\]
+Then, we use the standard error for $\psi$ for our prediction interval, giving us the $100(1-\alpha)$ percent prediction interval 
+\[\left[\hat{y}_0 \pm t_{\alpha/2, n-2} \sqrt{MSE\left(1+\frac{1}{n} + \frac{(x_0-\bar{x})^2}{S_{xx}}\right)}\right]\]
+We can also conduct hypothesis testing, suppose our hypotheses are $H_0: y_0 = y_{00}$, $H_1: y_0 \neq y_{00}$, then we use the test statistic
+\[\frac{\hat{y}_0 - y_{00}}{\sqrt{MSE\left(1+\frac{1}{n} + \frac{(x_0-\bar{x})^2}{S_{xx}}\right)}} = \frac{\hat{y}_0 - y_{00}}{se(\psi)}  \sim t_{n-2}\]
+We reject the null hypothesis when $|t_0| > t_{\alpha/2, n-2}$.
+
+
+
 \section{Coefficient of Determination}
 
 The quantity 

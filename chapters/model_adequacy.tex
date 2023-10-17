@@ -37,7 +37,7 @@ This gives us the variance of the $i$th residual as
 and the covariance between residuals $e_i$ and $e_j$ as 
 \[\Cov(e_i,e_j) = -\sigma^2h_{ij}\]
 Now, we can studentize the reisduals to obtain 
-\[r_i = \frac{e_i}{\sqrt{MSE(1-h_{jj})}}\]
+\[r_i = \frac{e_i}{\sqrt{MSE(1-h_{ii})}}\]
 We can plot the studentized residuals vs fitted values to check for non-constancy of variance. The plot should show a random distribution of points. Conversly, non-constance variance would appear as a pattern, an increasing or decreasing collection of points. A scale-location plot can also be used to exam homogeneity, by plotting 
 \[\sqrt{|r_i|} \text{ vs } \hat{Y}_i\]
 If the residuals lie in a narrow band around 0 then there are no evidence to suggest we need corrections. Otherwise, if the residuals show a pattern, either increasing or decreasing, this is a sign that variance is non constant. If a double-bow pattern appears, this is indication that the variance in the middle is larger than the variance at the extremes. If the residuals appear to have a quadratic relationship (i.e a parabola shape), there may be a nonlinear relation that the model has not accounted for.
