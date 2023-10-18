@@ -171,6 +171,9 @@ The estimate of the variance $\sigma^2$ is also known as the mean square error (
     \item Under the normality assumption, $e_i \iid N(0,\sigma^2)$. The method of maximum likelihood leads to the method of least squares.
     \[L(\beta_0, \beta_1,\sigma^2) = \left(\frac{1}{\sqrt{2\pi}\sigma}\right)^n\exp\left(-\frac{1}{2\sigma^2}\sum_{i=1}^n \epsilon_i^2\right)\]
     So maximizing $L(\beta_0,\beta_1, \sigma^2)$ is equivalent to minimizing $\sum \epsilon_i^2$.
+    \item The variance for $\hat{y}$ is,
+    \[\Var(\hat{Y}) = \sigma^2\sum_{i=1}^n\left(\frac{1}{n} + k_i(X_i - \bar{X})^2\right) = \sigma^2\left(\frac{1}{n} + \frac{(X - \bar{X})}{S_{xx}}\right)\]
+    We can replace $\sigma^2$ with the mean square error as we will see in the next section to compute the sample variance of $\hat{Y}$.
 \end{enumerate}
 
  \subsection{Estimation of $\sigma^2$}

@@ -302,6 +302,9 @@ with $(p-1) - (p - 1 -r) = r$ degrees of freedom. This sum of squares is called 
 \[F_0 = \frac{SSR(\beta_2|\beta_1)/r}{MSE}\]
  If $F_0 > F_{\alpha, r, n-p}$, then we reject the null hypothesis and conclude that at least one of the parameters in $\beta_2$ is not zero, and at least one of the regressors in $X_2$ contributes signficantly to the regression model. This is sometimes called a \textbf{partial $F$ test} since it measures the contribution of regressors in $X_2$ given that $X_1$ is in the model.\\
 
+ Alternatively, we can compute this using the residual sum of squares, we'll denote the full model residual sum of squares with $SSE(F)$ and its corresponding degrees of freedom as $df_F = n-p$, similarly for the reduced model we will use $SSE(R)$ and $df_R = n-p+r$. Note that $df_R - df_F = n-p +r - n + p = r$, and our test statistic becomes 
+ \[F_0 = \frac{\frac{SSE(R) - SSE(F)}{df_R - df_F}}{\frac{SSE(F)}{df_F}} = \frac{(SSE(R) - SSE(F))/r}{MSE}\]
+
  If we want to compute the regression squares for multiple variables, say 
  \[SSR(\beta_2| \beta_1, \beta_0)\]
  We compute it in the following way 

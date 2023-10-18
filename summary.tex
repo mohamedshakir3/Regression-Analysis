@@ -184,13 +184,13 @@ label={[anchor=west, fill=green]north west:\textbf{#1:}},
         \begin{bluebox}{Estimation on $\sigma^2$}
             \[SSE = \sum_{i=1}^ne_i^2 = (y_i-\hat{y}_i)^2\]
             $SSE$ has $n-2$ degrees of freedom.
-            \[\hat{\sigma}^2 = \frac{SSE}{n-2} = MSR\]
+            \[\hat{\sigma}^2 = \frac{SSE}{n-2} = MSE\]
         \end{bluebox}\\[-2ex]
     \end{blackbox}
     \begin{blackbox}{Hypothesis Testing on the Parameters}
         Testing on the slope for a constant $\beta$
         \[H_0: \hat{\beta}_1 = \beta, \ H_1: \hat{\beta}_1 \neq \beta\]
-        If $\sigma^2$ is known,\\[-3ex]
+        If $\sigma^2$ is known,\\[-3.7ex]
         \[Z_0 = \frac{\hat{\beta}_1 - \beta}{\sqrt{\sigma^2/S_{xx}}}\]
         If $\sigma^2$ is unknown,\\[-4ex]
         \[t_0 = \frac{\hat{\beta_1} - \beta}{\sqrt{MSE/S_{xx}}}\]
@@ -238,10 +238,11 @@ label={[anchor=west, fill=green]north west:\textbf{#1:}},
         \[\hat{\beta}_0 - t_{\alpha/2, n-2}se(\hat{\beta}_0) \leq \hat{\beta}_0 \leq \hat{\beta}_0 + t_{\alpha/2, n-2}se(\hat{\beta}_0)\]
         For $\sigma^2$, \\[-4ex]
         \[\frac{(n-2)MSE}{\chi^2_{\alpha/2, n-2}} \leq \sigma^2 \leq \frac{(n-2)MSE}{\chi^2_{1-\alpha/2, n-2}}\]
+        To 
         \begin{brownbox}{Interval Estimation on Mean Response}
             An unbiased estimator for $E(y|x_0)$ for a value of regressor $x=x_0$ is 
             \[\widehat{E(y|x_0)} = \hat{\mu}_{y|x_0} = \hat{\beta_0} + \hat{\beta_1}x_0\]
-            The variance is 
+            The variance is \\[-1.2ex]
             \[\Var(\hat{\mu}_{y|x_0}) = \frac{\sigma^2}{n} + \frac{\sigma^2(x_0-\bar{x})^2}{S_{xx}}\]
             The sampling distribution for 
             \[\frac{\hat{\mu}_{y|x_0} - E(y|x_0)}{\sqrt{MSE(1/n + (x_0-\bar{x})^2/S_{xx})}} \sim t_{n-2}\]
@@ -352,25 +353,24 @@ label={[anchor=west, fill=green]north west:\textbf{#1:}},
         If we fail to reject the null hypothesis, we can remove the corresponding regressor $x_j$ from the model.
     \end{blackbox}
     \begin{blackbox}{Extra Sum Of Squares}
-        We want to partition $r$ of the $k$ regressors to test \\[-2ex]
+        We want to partition $r$ of the $k$ regressors to test \\[-2.5ex]
         \[H_0: \beta_2 = 0, H_1: \beta_2 \neq 0\]
         $Y = X\beta + \epsilon$,where $Y$ is $n\times 1$, $X$ is $n\times p$, $\beta$ is $p\times 1$, and $\epsilon$ is $n \times 1$ with $p = k+1$.
         \begin{redbox}{Full Model}
             \[Y = X\beta + \epsilon = X_1\beta_1 + X_2\beta_2 + \epsilon\] 
             $X_1$ is $n \times (p-r)$, $X_2$ is $n\times r$.\\[-2ex]
            \[\hat{\beta} = (X'X)^{-1}X'Y, \ SSR(\beta) = \hat{\beta}'X'Y\]
-           which has $k = p-1$ degrees of freedom.
+           which has $k = p-1$ degrees of freedom, $df_F = n-p$.
         \end{redbox}
         \begin{brownbox}{Reduced Model}
             To test regressors in $\beta_2$, fit the model assuming $H_0: \beta_2 = 0$ is true. \\[-3ex]
             \[Y = X_1\beta_1 + \epsilon\]
             \[\hat{\beta}_1 = (X_1'X_1)^{-1}X_1'Y, \ SSR(\beta_1) = \hat{\beta_1}'X_1'Y\]
-            which has $k-r = p - 1 - r$ degrees of freedom. The sum of squares due to $\beta_2$ given that $\beta_1$ is already in the model is \\[-3ex]
+            which has $k-r = p - 1 - r$, $df_R = n-p+r$ degrees of freedom. The sum of squares due to $\beta_2$ given that $\beta_1$ is already in the model is \\[-3ex]
             \[SSR(\beta_2 | \beta_1) = SSR(\beta) - SSR(\beta_1)\]
         \end{brownbox}
-            
         The null hypothesis $\beta_2=0$ can be tested with (partial $F$-test)\\[-4ex]
-        \[F_0 = \frac{SSR(\beta_2|\beta_1)/r}{MSE}\]
+        \[F_0 = \frac{SSR(\beta_2|\beta_1)/r}{MSE} = \frac{\frac{SSE(R) - SSE(F)}{df_R-df_F}}{MSE}\]
         If $F_0 > F_{\alpha, r, n-p}$, then we reject the null hypothesis and conclude that at least one regressor in $X_2$ contributes.\\
     \end{blackbox}
     \begin{blackbox}{Lack of Fit}
@@ -381,7 +381,7 @@ label={[anchor=west, fill=green]north west:\textbf{#1:}},
         \textbf{$F$-Statistic:}\\[-2ex]
         \[F^* = \frac{SS_{LOF}/(m-2)}{SS_{PE}(n-m)} = \frac{MS_{LOF}}{MS_{PE}}\]
         \begin{bluebox}{Testing Lack of Fit}
-            If the regression is linear, then $E(y_i) = \beta_ + \beta_1x_i$, \\[-1ex]
+            If the regression is linear, then $E(y_i) = \beta_0 + \beta_1x_i$, \\[-1.5ex]
             \[H_0: E(y_i) = \beta_0 + \beta_1x_i, \ H_1: E(y_i) \neq \beta_0 + \beta_1x_i\]
             Reject the null hypothesis when $F^* > F_{\alpha, m-2, n-m}$.
         \end{bluebox}\\[-2ex]
