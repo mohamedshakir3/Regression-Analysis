@@ -1,0 +1,106 @@
+\chapter{Building the Regression Model}
+
+In application, when dealing with a large number of variables, we want to be able to select the best subset of variables to include in our model. Finding this appropriate subset of variables is often called the \textbf{variable selecton problem}. If we have $p-1$ predictors available, then there are $2^p -1$ possible models we can contsruct. One approach is so select \textbf{all possible regression} and test $2^{p} - 1$ possible models.
+
+\section{Criteria for Model Selection}
+
+We may choose our model based on the largest value of explained variation $R^2$. A plot of the mean square residual vs the number of variables will appear as a parabola, from which we can determine the best fitting model. An adjusted $R^2$ takes into account the values of $n$ and $p$, 
+\[R^2_{a,p} = 1 - \left(\frac{n-1}{n-p}\right)\frac{SSE}{SSTO} = 1 - \frac{MSE(p)}{SSTO/(n-1)}\]
+We want to minimize $MSE(p)$ which in turn maximizes the adjusted $R^2$. 
+
+\subsection{Mallow's $C_p$} 
+
+Mallows proposed a criterion that is related to the mean square error of a fitted value, 
+
+\[E(\hat{Y}_i - E(Y_i))^2 = (E(Y_i) - E(\hat{Y}_i))^2 + \Var(\hat{Y}_i)\]
+
+Suppose that the true model has $q$ predictor variables, 
+\[Y = X_q\beta_Q + \epsilon\]
+and that we fit a model with $p$ predictors. Let $H_p$ be the hat matrix using only $p$ variables. We define the bias for the $i^{th}$ fitted value as 
+\[E(\hat{Y}_i) - \mu_i\]
+where $\mu_i$ is the true mean $E(Y_i)$. Let the total squares bias for the $p$-term equation be 
+\[SSB(p) = \sum_{i=1}^n (E(Y_i) - E(\hat{Y}_i))^2\]
+Then we define the standardized total mean square error as 
+\[\Gamma_p = \frac{1}{\sigma^2}\left(\sum_{i=1}^n (E(\hat{Y}_i) - \mu_i)^2 + \sum_{i=1}^n \Var(\hat{Y}_i)\right) = \frac{SSB(p)}{\sigma^2} + \frac{1}{\sigma^2}\sum_{i=1}^n \Var(\hat{Y}_i)\]
+It can be shown that 
+\[\sum_{i=1}^n \Var(\hat{Y}_i) = p\sigma^2\]
+and the expected value of the residual sum of squares is 
+\[E(SSE_p) = SSB_p + (n-p)\sigma^2\]
+Thus,
+
+\[\Gamma_p = \frac{SSB_p}{\sigma^2} + \frac{1}{\sigma^2}\sum_{i=1}^n\Var(\hat{Y}_i) = \frac{E(SSE_p) - (n-p)\sigma^2}{\sigma^2} + p = \frac{E(SSE_p)}{\sigma^2} - n + 2p\]
+\noindent
+The vector of residuals becomes 
+\[\hat{\epsilon}_p = (1 - H_p)Y\]
+and the sum of squares is 
+\[SSE_p = \hat{\epsilon}_p'\hat{\epsilon}\]
+So, 
+\[\bias = E(\hat{\epsilon}) = (1-H_p)E(Y) = E(Y) - E(\hat{Y})\]
+When $p=q$, we have that the bias is equal to 0. Now using the fact that $(1-H_p)$ is idempotent, we have that
+
+\begin{align*}
+    E(SSE_p) &= E(\hat{\epsilon}_p'\hat{\epsilon}_p)\\
+             &= E(Y'(1-H_p)Y)\\
+             &= E(Y'(1-H_p)(1-H_p)Y)\\
+             &= \sigma^2\trace(I-H_p) + \bias'\bias\\
+             &= \sigma^2(n-p) + \sum_{i=1}^n (E(Y_i) - E(\hat{Y}_i))^2\\
+\end{align*}
+
+We can show that the sum of the variances of the fitted values is $p\sigma^2$, 
+
+\begin{align*}
+    \sum_{i=1}^n \Var(\hat{Y}_i) &= \sigma^2 \sum_{i=1}^n (x_i'(X'X)^{-1}x')\\
+    &= \sigma^2\trace(X'(X'X)^{-1}X)\\
+    &= \sigma^2\trace(H)\\
+    &= p\sigma^2
+\end{align*}
+To reiterate, this gives us our standardized total mean square error as
+\[\Gamma_p = \frac{SSE_p}{\sigma^2} - n + 2p\]
+
+When we use MSE to estimate $\sigma^2$, and $SSE_p$ so estimate $E(SSE_p)$, we get Mallow's $C_p$ statistic,
+
+\[C_p = \frac{SSE_p}{MSE} - n + 2p\]
+
+If there is negligible bias in the $p$-term model, then $E(SSE_p) \approx (n-p)\sigma^2$ and $C_p \approx p$. Mallows technique to find the optimal subset of variables is to plot $C_p$ vs $p$ for all the possibel regression, and models with small bias will be close to the line $C_p = p$. Models with large bias will be above the line, and values below the line are considered to have no bias. 
+
+\subsection{Akaike Information Criterion}
+
+Akaike proposed an information criterion ($\aic$) that is based on the maximized the expected entropy of the model. Essentially, $\aic$ is a penalized log-likelihood function. Let $L$ be the likelihood function for a specific model, $\aic$ is defined as
+\[\aic = -2\ln L + 2p\]
+In the case of ordinary least squares regression, it becomes 
+\[\aic_p = n\ln (SEE_p) - n\ln n + 2p\]
+There are several Bayesian extension of $\aic$, such as the Shwartz's Bayesian criterion, 
+\[\bic_{\sch} = n\ln(SSE_p) - n\ln n + p \ln n\]
+This criterion places a larger penalty on adding regressors as the sample size increases and is the one used in R. 
+
+\subsection{Prediction Sum of Squares Criterion}
+
+Frequently, regression models are used for prediction of future observations or estimation of the mean response. Generally, we want to select the regressors that minimize the prediction error. So, we select the model that minimizes the prediction sum of squares,
+
+\[\press_p = \sum_{i=1}^n (Y_i - \hat{Y}_{(i)})^2 = \sum_{i=1}^n \left(\frac{e_i}{1-h_{ii}}\right)^2\]
+
+\section{Computational Techniques for Variable Selection}
+
+Evaluating model selection criteria for all possible models requires a large amount of computions. We look at several techniques to reduce the computational burden.
+
+\subsection{Forward Selection}
+
+The procedure begins with the assumption that there are no regressors in the model other than the intercept. Then, we insert regressors one at a time. The first regressor selected to be added in the model is the one with the largest simple correlation, say $x_1$, with the response $y$. This is also the varaible with the greatest $t$-statistic in absolute value. A preselected $F$-value, which we call $F_{\fin}$, is used to determine whether or not to add a regressor to the model.\\
+
+Then, after selecting the first variable, we choose the second variable which has the largest correlation with the response after adjusting for the effect of the first regressor. These correlations are called \textbf{partial correlation}. They are computed between the residuals from the first regression and the residuals from the regressions of the other candidate regressors on $x_1$. That is, the residuals from 
+\[\hat{y} = \hat{\beta}_0 + \hat{\beta}_1x_1 \]
+and the residuals on the other candidate regressors, 
+
+\[\hat{x}_j = \hat{\alpha}_{0j} + \hat{\alpha}_{1j}x_1, \ j = 2, \ldots, K\]
+
+Once we select $x_2$, this implies that the largest partial $F$-statistic is 
+\[F = \frac{SSR(x_2 | x_1)}{MSE(x_1,x_2)}\]
+If $F > F_{\fin}$, then we add $x_2$ to the model. We then check the $t$-value and if it is below a preset limit, we may need to drop a variable from the model. We repeat this procedure until the largest partial $F$-statistic is less than $F_{\fin}$, or until we have added all the variables.
+
+\subsection{Backward Elimination}
+
+Backward selection works in the opposite direction. We begin with a model that includes all $K$ candidate regressors. We then compute the partial $F$-statistic for each regressor as if it were the last one to enter the model. The smallest of these partial $F$-statistics is compared with a preselected $F$-value, $F_{\fout}$. If the smallest partial $F$-value is less than $F_{\fout}$, that regressor is removed from the model, and we fit the regression model with the remaining $K-1$ regressors.The new partial $F$-statistic is calculated, and we repeat this process. The procedure stops when the smallest partial $F$ value is not less than the preselected cutoff value, $F_{\fout}$.\\
+
+\subsection{Stepwise Regression}
+
+Stepwise regression is a modification of forward selection. In each step, all regressors entered into the model thus far are reassesed with their partial $F$ statistics. A regressor added at an ealier step may now be redundant because of the relationship it has with the new regressors. If the partial $F$ statistic for a variable is less than $F_{\fout}$, then that variable is removed from the model. This process requires 2 cutoff values, $F_{\fin}$ and $F_{\fout}$. Some may choose $F_{\fin} = F_{\fout}$, however $F_{\fin} > F_{\fout}$ is more common since it makes the criteria for adding variables more strict than the criteria for removing variables.

@@ -1,0 +1,131 @@
+\chapter{Multicollinearity}
+
+\section{Properties of Multicollinearity}
+Multicollinearity refers to the situation where two or more of the predictor variables exhibit a near-linear relationship. If there is no linear relationship between the regressors, they are said to be \textbf{orthogonal}. The symptoms of multicollinearity are:
+
+\begin{enumerate}
+    \item Large variation in the estimated coefficients when a new variable is either added or deleted.
+    \item Non-significant results in individual tests on the coefficients of important variables.
+    \item Large coefficients of simple correlation between pairs of variables. 
+    \item Wide confidence interval for the regression coefficients of important variables.
+\end{enumerate}
+
+The main difficulty is that the matrix $(X'X)$ may not be invertible. Multicollinearity affects the interpretation of the coefficients in that they may vary in value. 
+
+\section{Detecting Multicollinearity}
+Consider the case of two predictor variables $X_1$ and $X_2$. If the variables are standardized, then the matrix becomes 
+
+\[(X'X) = \frac{1}{1-r_{12}^2}\begin{pmatrix}
+    1 & r_{12} \\
+    r_{12} & 1
+\end{pmatrix}\]
+where $r_{12}$ is the correlation between the two variables. The variance covariance matrix of the coefficients is given by
+\[\sigma^2(X'X)^{-1} = \sigma^2 \frac{1}{1-r_{12}^2}\begin{pmatrix}
+    1 & r_{12} \\
+    r_{12} & 1
+\end{pmatrix}\]
+As $|r_{12}| \rightarrow 1$, the variance $\Var(\hat{\beta}_k) \rightarrow \infty$, and the covariance $\Cov(\hat{\beta}_1, \hat{\beta}_2) \rightarrow \pm \infty$ depending on if $r_{12} \rightarrow +1$ or $r_{12} \rightarrow -1$. The estimates are 
+
+\[\hat{\beta} = (X'X)^{-1}X'Y\]
+
+which can be written as the individual estimates
+
+\[\hat{\beta}_1 = \frac{r_{1Y} - r_{12}}{1-r_{12}^2}, \ \hat{\beta}_2 = \frac{r_{2Y} - r_{12}}{1-r_{12}^2}\]
+
+In general, the diagonal elements of $(X'X)^{-1}$ are $C_{jj} = \frac{1}{1-R_j^2}$ where $R_j^2$ is the $R$-square value obtained from the regression of $X_j$ on the other $p-1$ variables. If there is a strong multicollinearity between $X_j$ and the other $p-1$ variables, then 
+\[R_j^2 \approx 1, \ \Var(\hat{\beta_j}) = \frac{\sigma^2}{1-R_j^2} \rightarrow \infty\]
+
+Multicollinearity tends to produce least squares estimates $\hat{\beta}_j$ that are too far large in absolute value. To see this, consider the squared distance from $\hat{\beta}$ and $\beta$:
+
+\[L^2 = ||\hat{\beta}-\beta||^2 = (\hat{\beta}-\beta)'(\hat{\beta}- \beta)\]
+The expected value for the squared distance is 
+\begin{align*}
+    E(L^2) &= E(\hat{\beta} - \beta)'(\hat{\beta} - \beta)\\
+           &= \sum_{j=1}^p E(\hat{\beta}_j - \beta_j)^2\\
+           &= \sum_{j=1}^p \Var(\hat{\beta}_j) = \sigma^2\trace(X'X)^{-1}\\
+           &= \sigma^2 \sum_{j=1}^p \frac{1}{\lambda_j} 
+\end{align*}
+
+where $\lambda_j$ are the eigenvalues of $X'X$. If the matrix $X'X$ is ill-conditioned because of multicollinearity, at least on of the eigenvalues $\lambda_j$ will be small, which will cause the distance from the least squares estimate $\hat{\beta}$ and the true parameters $\beta$ to be large. Using this result, we can show that 
+\[E(\hat{\beta}-\beta)'(\hat{\beta} - \beta) = E(\hat{\beta}'\hat{\beta} - 2\hat{\beta}'\beta + \beta'\beta) = \sigma^2 \sum_{j=1}^n \frac{1}{\lambda_j}\]
+This gives us 
+\[E(||\hat{\beta}||^2) = E(\hat{\beta}'\hat{\beta}) = \beta'\beta + \sigma^2\trace(X'X)^{-1}\]
+Which means, the vector $\hat{\beta}$ is generally longer than the vector $\beta$. This implies that the method of least squares produces estimated regression coefficients that are too large in absolute value.
+
+
+\subsection{Variance Inflation Factors}
+
+Suppose the regression model is fitted using the standardized predictor variables, 
+\[Y_i^* = \frac{1}{\sqrt{n-1}}\left(\frac{Y_i - \bar{Y}}{s_Y}\right)\]
+\[X_{ik}^* = \frac{1}{\sqrt{n-1}}\left(\frac{X_{ik} - \bar{X}_k}{s_k}\right), \ k = 1, \ldots, p-1\]
+
+The model then becomes
+
+\[Y_i^* = \sum_{k=1}^{p-1} \beta_i^*X_{ik}^* + \epsilon_i^*\]
+\[\beta_k = \left(\frac{s_Y}{s_k}\right)\beta_k^*\]
+\[\beta_0 = \bar{Y} - \sum_{i=1}^{k-1}\beta_i\bar{X}_i\]
+\[r_{XX}\hat{\beta}^* = r^{YX}\]
+where $r_{XX}$ is the correlation matrix 
+\[r_{XX} = \begin{pmatrix}
+    1 & r_{12} & r_{13} & \cdots & r_{1k}\\
+    r_{12} & 1 & r_{23} & \cdots & r_{2k}\\
+    r_{13} & r_{23} & 1 & \cdots & r_{3k} \\
+    \vdots & \vdots & \vdots & \ddots & \vdots \\
+    r_{1k} & r_{2k} & r_{3k} & \cdots & 1 
+\end{pmatrix}\]
+and $r_{YX}'$ is the vector of simple correlation between $x_j$ and the response $y$, 
+
+\[r_{jy} = \Cor(Y, X_j)\]
+
+The variance of the esitmates $\beta$ is 
+\[\Var(\beta) = \sigma^2r_{XX}^{-1}\]
+
+We define the variance inflation factor as 
+\[\vif_j = C_{jj} = (1-R_j^2)^{-1}\]
+where $R_k^2$ is the coefficient of multiple determination when $X_k$ is regressed on the $p-2$ other $X$ variables. So 
+\[\Var(\hat{\beta}_k) = \sigma^2(1- R_k^{2})^{-1}\]
+The variance inflation factor is 1 when the coefficient of determination is 0, in otherwords whenever $X_k$ is not linearly related to the other $X$ variables in the model. As a general rule, a value of $\vif_j > 10$ indicates multicollinearity exists. We may also compute the average of the variance inflation factors,
+
+\[\overline{\vif} = \frac{\sum_{k=1}^{p-1}\vif_k}{p-1}\]
+\noindent
+A mean value greather than 1 indicates serious multicollinearity.
+
+\section{Ridge Regression}
+
+Ridge regression is considered as a remedial measure for multicollinearity. We transform the normal equation 
+
+\[(X'X)\hat{\beta} = X'Y\]
+\noindent
+using the standardized variables so that it becomes 
+
+\[r_{XX}\hat{\beta} = r_{YX}\]
+
+The eigenvalues can also be used to measure the extent of multicollinearity,. If one or more eigenvalues are small, then there are near linear dependeces in the columns of $X'X$. We define the condition number $\kappa$ and condition indices $\kappa_j$ of $X'X$ as 
+\[\kappa = \frac{\lambda_{\max}}{\lambda_{\min}}, \ \kappa_j = \frac{\lambda_{\max}}{\lambda_j}\]
+
+If $\kappa < 100$, then there is no serious multicollinearity. If $100 < \kappa < 1000$, then there is moderate to strong multicollinearity. If $\kappa > 1000$, then there is severe multicollinearity.\\
+\noindent
+We define the ridge estimator $\hat{\beta}_R$ as the solution to the equation
+\[(r_{XX} + cI)\hat{\beta}_R = r_{YX}\]
+where $c \geq 0$ is a constant. Solving this yields 
+\[\hat{\beta}_R = (r_{XX} + cI)^{-1}r_{YX}\]
+
+The constant $c$ reflects the fact that the ridge estimators will be biased but they tend to be more stable or less variable than the ordinary least squares estimators. Ridge regression can also be obtained from the method of penalized regression, with the following system of equations 
+
+\begin{align*}
+    r_{Y1} &= (1+c)\hat{\beta}_{R1} + r_{12}\hat{\beta}_{R2} + \cdots + r_{1,p-1}\hat{\beta}_{R,p-1}\\
+    r_{Y2} &= r_{21}\hat{\beta}_{R1} + (1+c)\hat{\beta}_{R2} + \cdots + r_{2,p-1}\hat{\beta}_{R,p-1}\\
+    r_{Y,p-1} &= r_{p-1,1}\hat{\beta}_{R1} + r_{p-1,2}\hat{\beta}_{R2} + \cdots + (1+c)\hat{\beta}_{R,p-1}\\
+\end{align*}
+
+We can write the penalized least squares as 
+
+\[Q = \sum (Y_i - \beta_1 X_{i1} - \cdots - \beta_{p-1}X_{i,p-1})^2 + c\sum_{j=1}^{p-1}\beta_j^2\]
+
+Differentiating with respect to each of the parameters gives us the equations above.
+
+\subsection{LASSO}
+
+Another approach to ridge regression is to use a pentalty function 
+\[c \sum_{j=1}^{p-1}|\beta_j|\]
+which permits some regression coefficients to be 0. LASSO stands for Least Absolute Shrinkage and Selection Operator

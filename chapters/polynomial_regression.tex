@@ -1,0 +1,83 @@
+\chapter{Polynomial Regression Models}
+
+\section{Polynomial Models in One Variable}
+The $k$-order polynomial regression model in one variable is defined as 
+\[Y = \beta_0 + \beta_1X + \beta_2X^2 + \cdots + \beta_kX^k + \epsilon\]
+It is important to keep the order $k$ as small as possible. A lower order model in a transformed variable is almost always preferable to a higher order model in the original variable.\\
+
+\noindent
+Often, orthogonal polynomials are used in modeling because they simplify the fitting process.
+
+\[Y_i = \beta_0P_0(X_i) + \beta_1P_1(X_i) + \beta_2P_2(X_i) + \cdots + \beta_kP_k(X_i) + \epsilon_i\]
+where $P_j$ is a $j$ order polynomial satisfying 
+
+\[\sum_{i=1}^n P_j(X_i)P_l(X_i) = 0, \ j \neq l\]
+\[P_0(X_i) = 1\]
+
+
+\noindent
+The least squares estimates are given by 
+
+\[\hat{\beta}_j = \frac{\sum_{i=1}^n P_j(X_i)Y_i}{\sum_{i=1}^n P_j^2(X_i)}, \ j=0,1,\ldots,k\]
+
+The model then becomes $y = X\beta + \epsilon$ where $X$ is 
+
+\[X = \begin{bmatrix}
+    P_0(X_1) & P_1(X_1) & \cdots & P_k(X_1)\\
+    P_0(X_2) & P_1(X_2) & \cdots & P_k(X_2)\\
+    \vdots & \vdots & \ddots & \vdots\\
+    P_0(X_n) & P_1(X_n) & \cdots & P_k(X_n)
+\end{bmatrix}\]
+
+Since this matrix has orthogonal columns, $X'X$ becomes 
+
+\[X'X = \begin{bmatrix}
+    \sum\limits_{i=1}^n P_0^2(X_i) & 0 & \cdots & 0\\
+    0 & \sum\limits_{i=1}^n P_1^2(X_i) & \cdots & 0\\
+    \vdots & \vdots & \ddots & \vdots\\
+    0 & 0 & \cdots & \sum\limits_{i=1}^n P_k^2(X_i)
+\end{bmatrix}\]
+
+The residual sum of squares is 
+
+\[SSE(k) = SST - \sum_{j=1}^k \hat{\beta}_j\left(\sum_{i=1}^n P_j(X_i)Y_i\right)\]
+
+and the regression sum of squares is 
+
+\[SSR(\beta_j) = \hat{\beta}_j\sum_{i=1}^nP_j(X_i)Y_i\]
+
+To test significance of the highest order term, we should test $H_0: \beta_k = 0$, using the $F$ statistic
+
+\[F_0 = \frac{SSR(\beta_k)}{SSE(k)/(n-k-1)} = \frac{\hat{\beta}_k\sum_{i=1}^n P_k(X_i)Y_i}{SSE(k)/(n-k-1)}\]
+
+The advantage of using orthogonal polynomials is that the model can be fitted sequentially. Models can be done my computers so this is not as important as it once was.
+
+\section{Polynomial Models in Two Variables}
+
+When 2 or more variables are involved, cross terms are included in the model. For 2 variables, the model is 
+
+\[Y = \beta_0 + \beta_1X_1 + \beta_2X_2 + \beta_{11}X_1^2 + \beta_{22}X_2^2 + \beta_{12}X_1X_2 + \epsilon\]
+\noindent
+These are referred to as response surfaces.
+
+\section{Indicator Regression Models}
+
+When working with qualitative or categorical data, indicator functions can be used as "dummy" variables. 
+
+\[X_2 = \begin{cases}
+    1 & \text{Male} \\
+    0 & \text{Female}
+\end{cases}\]
+
+An application of this is where if you want to fit a simple model as a function of gender, we may have
+
+\[Y = \beta_0 + \beta_1X_1 + \beta_2X_2 + \epsilon\]
+
+With $X_2$ being the gender variable, so 
+
+\[Y = \begin{cases}
+    \beta_0 + \beta_1X_1 + \beta_2 + \epsilon & \text{Male}\\
+    \beta_0 + \beta_1X_1 + \epsilon & \text{Female}
+\end{cases}\]
+
+

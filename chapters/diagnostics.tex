@@ -1,0 +1,70 @@
+\chapter{Diagnostics for Leverage and Measures of Influence}
+
+A single observation can have a large effect on the regression analysis. We want to detect influential observations that have a large effect on our regression line, and we will be using the hat matrix to do so. \\
+
+Recall the minimized sum of squares
+
+\[R(\hat{\beta}) = (Y - X\hat{\beta})'(Y - X\hat{\beta}) = Y'(1-H)Y\]
+where $H = X(X'X)^{-1}X'$ is the hat matrix. We define the $i^{th}$ diagonal entry of $H$ as 
+\[h_{ii} = x_i'(X'X)^{-1}x_i\]
+where $x_i'$ is the $i^{th}$ row of $X$. In the case of simple linear regression with $p=2$, we have $x_i' = (1, X_i)$ and
+\[h_{ii} = \frac{1}{n\sum_{i=1}^n X_i^2 - \left(\sum_{i=1}^n X_i\right)^2} x_i'\begin{pmatrix}
+    \sum_{i=1}^n X_i^2 & -\sum_{i=1}^n X_i \\
+    -\sum_{i=1}^n X_i & n
+\end{pmatrix}x_i = \frac{1}{n}+\frac{(X_i-\bar{X})^2}{\sum_{i=1}^n(X_i - \bar{X})^2}\]
+
+\section{Leverage}
+\begin{definition}
+    The \textbf{leverage} of the $i^{th}$ observation is defined as $h_{ii}$.
+\end{definition}
+
+We can gain further insight by writing the mean $\bar{X}$ in terms of the mean with the $i^{th}$ observation removed, which we denote $\bar{X}_{(i)}$.
+\[\bar{X} = \frac{1}{n}(X_i + (n-1)\bar{X}_{(i)})\]
+Then, 
+\[X_i - \bar{X} = X_i - \frac{1}{n}\left(X_i + (n-1)\bar{X}_{(i)}\right) = \frac{n-1}{n}(X_i - \bar{X}_{(i)})\]
+Then, we can rewrite the leverage of the $i^{th}$ observation as 
+\[h_{ii} = \frac{1}{n} + \frac{(X_i-\bar{X})^2}{\sum_{i=1}^n(X_i - \bar{X})^2} = \frac{1}{n}+\left(\frac{n-1}{n}\right)^2 \frac{(X_i-\bar{X}_{(i)})^2}{\sum_{i=1}^n(X_i-\bar{X})^2}\]
+\noindent
+This tells us that the leverage of the $i^{th}$ observation will be large if $X_i$ is far from the mean of the observations.
+
+\subsection{Properties of Leverage}
+
+The leverage can be used to detect influential observations, from the fact that 
+    \[\trace(H) = \trace(X(X'X)^{-1}X') = \trace((X'X)^{-1}X'X) = \trace(I_p) = p\]
+    So the average leverage is $\sum_{i=1}^n h_{ii}/n = p/n$. If $h_{ii} > 2p/n$, then the $i^{th}$ observation is considered to be influential. Note that not all high leverage observations are influential.
+
+
+\section{Measures of Influence}
+
+\subsection{Difference in Fit}
+
+We can measure the difference in fit by comparing the sum of squares with and without the $i^{th}$ observation. We define the \textbf{Difference in fit} as
+
+\[DFFITS_i = \frac{\hat{Y}_i - \hat{Y}_{i(i)}}{\sqrt{MSE_{(i)}h_{ii}}} = t_i \left(\frac{h_{ii}}{1-h_{ii}}\right)^{\frac{1}{2}}\]
+where $t_i$ represents the Studentized deleted residual 
+\[t_i = e_i\left(\frac{n-p-1}{SSE(1-h_{ii})-e_i^2}\right)^{\frac{1}{2}}\]
+
+This shows that we can calculate the difference in fit using the error sum of squares and the hat matrix. The value for $DFFITS_i$  represents the number of estimated standard deviations of $\hat{Y}_i$ the the fitted value increases or decreases with the inclusion of the $i^{th}$ observation. If the $i^{th}$ observation is an outlier and has high liverage, then 
+\[\left(\frac{h_{ii}}{1-h_{ii}}\right)^{\frac{1}{2}} > 1\]
+and $DFFITS$ will be large in absolute value. Influential cases are flagged for small datasets if 
+\[|DFFITS_i| > 1\]
+For large datasets, we use 
+\[|DFFITS_i| > 2\sqrt{\frac{p}{n}}\]
+
+\subsection{Cook's Distance}
+
+Cook's distance considers the influence of the $i^{th}$ observation on the entire regression line. We define Cook's distance as
+
+\[D_i = \frac{\sum_{j=i}^n(\hat{Y}_j - \hat{Y}_{j(i)})^2}{pMSE} = \frac{e_i^2}{pMSE}\left(\frac{h_{ii}}{(1-h_{ii})^2}\right)\]
+Cook's distance is large if the residual is large and the leverage is moderate, or if the residual is moderate and teh leverage is large, or if both or large. Influential cases are flagged wehn $D_i > 1$. 
+
+\subsection{Difference in Coefficents}
+
+The \textbf{DFBETAS} are the differences in the estimated regression coefficients with and without the $i^{th}$ observation. We define the DFBETAS as
+
+\[DFBETAS_{(i)} = \frac{\hat{\beta}_k - \hat{\beta}_{k(i)}}{\sqrt{MSE_{(i)}c_ii}}\]
+where $c_{ii}$ is the $i^{th}$ diagonal entry of $(X'X)^{-1}$. A large value of $DFBETAS_{(i)}$ indicates that the $i^{th}$ observation has a large effect on the $k^{th}$ regression coefficent. Influential cases are flagged if
+\[DFBETAS_{(i)} > \begin{cases}
+    2/\sqrt{n} & \text{for small datasets} \\
+    2\sqrt{p/n} & \text{for large datasets}
+\end{cases}\]
