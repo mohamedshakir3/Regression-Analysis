@@ -1,2 +1,231 @@
-\chapter{Logistic Regression}
+\chapter{Logistic Regression and General Linear Models}
 
+Sometimes we wish to model a binary response variable, a variable that can only take on two values say, 0 or 1. Consider the model where we estimate the likelihood that a person is wearing a life jacket, 
+
+\[Y_i = \beta_0 + \beta_1X_i + \epsilon_i\]
+where
+\[Y_i = \begin{cases}
+    1 & \text{with probability } \pi_i \\
+    0 & \text{with probability } 1 - \pi_i
+\end{cases}\]
+
+Then, 
+\[E(Y_i) = \pi_i\]
+
+The leassts squares model is problematic because 
+\begin{itemize}
+    \item The variance $\Var(Y_i) = \pi_i(1 - \pi_i)$ is not constant. 
+    \item The error terms $\epsilon_i$ are not normally distributed.
+    \item A linear model cannot guarantee that $\hat{Y}_i$ is between 0 and 1.
+\end{itemize}
+
+\section{Logistic Distribution}
+
+The logistic distribution has the density function 
+\[f(x) = \frac{e^x}{(1+e^x)^2}\]
+with a cumulative distribution function
+\[F(t) = \frac{e^t}{1+e^t}\]
+It can be shown that $E(X) = 0$ and $\Var(X) = \frac{\pi}{3}$. Suppose a random variable $Y$ is binary with 
+\[Y_i = \begin{cases}
+    1 & \beta^*_0 + \beta^*_1X_i + \epsilon^*_i < k\\
+    0 & \beta^*_0 + \beta^*_1X_i + \epsilon^*_i > k
+\end{cases}\]
+for some constant $k$, and $\epsilon_i^*$ has a logistic distribution. Then, 
+
+\begin{align*}
+    \pi_i = P(Y_i = 1) &= P(\beta^*_0 + \beta^*_1X_i + \epsilon^*_i < k)\\
+    &= F(k-\beta^*_0 - \beta^*_1X_i)\\
+    &= F(\beta_0 + \beta_1X_i)\\
+    &= \frac{e^{\beta_0 + \beta_1X_i}}{1+e^{\beta_0 + \beta_1X_i}}
+\end{align*}
+where $\beta_0 = k - \beta_0^*$ and $\beta_1 = -\beta_1^*$. 
+
+\section{Estimating Parameters}
+
+We estimate parameters based on maximizing the likelihood, so it is useful to note that 
+
+\[\ln \left(\frac{\pi_i}{1-\pi_i}\right) = \beta_0 + \beta_1X_i\]
+
+Then,
+\begin{align*}
+    \prod_{i=1}^n f(y_i) &= \prod_{i=1}^n \pi_i^{y_i}(1-\pi_i)^{1-y_i}\\    
+    &= \prod_{i=1}^n \left[\left(\frac{\pi_i}{1-\pi_i}\right)^{y_i}(1-\pi_i)\right]\\
+    \implies \ln \left(\prod_{i=1}^n f(y_i)\right)&= \sum_{i=1}^n y_i \ln \left(\frac{\pi_i}{1-\pi_i}\right) + \sum_{i=1}^n \ln(1-\pi_i)\\
+    &= \sum_{i=1}^n y_i(\beta_0 + \beta_1X_i) - \sum_{i=1}^n \ln(1+e^{\beta_0 + \beta_1X_i})
+\end{align*}
+
+There is no closed form solution to the maximum likelihood estimator, so we use numerical methods to obtain $\hat{\beta}_0$, and $\hat{\beta}_1$. So we get 
+
+\[\hat{\pi} = \frac{\exp(\hat{\beta}_0 + \hat{\beta}_1X_i)}{1 + \exp(\hat{\beta}_0 + \hat{\beta}_1X_i)}\]
+
+
+\subsection{Interpretation of the Parameters}
+
+Consider the fitted value at a specific value of $X$, say $X_0$. We will define the linear predictor as
+\[\eta = \ln \frac{\pi_i}{1 - \pi_i} = \beta_0 + \beta_1 X_i\]
+Then, the linear predictor at $X_0$ is 
+\[\hat{\eta}(X_0) = \hat{\beta}_0 + \hat{\beta}_1X_0\]
+Then similarly for $X_0 + 1$,
+\[\hat{\eta}(X_0 + 1) = \hat{\beta}_0 + \hat{\beta}_1(X_0 + 1)\]
+We defined $\eta$ to be the log-odds, which is simply the logarithm of the odds of event occuring. The odds are the probability an event occurs divided by the probability it does not occur. So, in this case our probability is $\pi_i$, so the difference in the log odds is 
+\[\hat{\eta}(X_0 + 1) - \hat{\eta}(X_0) = \hat{\beta}_1\]
+This gives us 
+\[\hat{\eta}(X_0 + 1) - \hat{\eta}(X_0) = \ln(\odds_{X_0 + 1}) - \ln(\odds_{X_0}) = \ln\left(\frac{\odds_{X_0+1}}{\odds_{X_0}}\right)\]
+Computing the anti-log of both sides gives us
+\[\hat{O}_R = \frac{\odds_{X_0 + 1}}{\odds_{X_0}} = e^{\hat{\beta}_1}\]
+This is known as the odds ratio. The odds ratio is the estimated increase in the probability of successes associated with a one unit change in the value of the predictor variable $X$. For a change of $d$ units, then 
+\[\hat{O}_R = e^{d\hat{\beta}_1}\]
+
+
+\subsection{Repeat Observations}
+
+Suppose that we have repeat observations at each of the levels of $X$, and set $Y_i$ to be the number of 1's observed for the $ith$ observation. Let $n_i$ be the number of trials at each ovservation. Then $Y_i \sim \Bin(n_i, \pi_i)$, and the likelihood
+is 
+
+\[L(\beta_0, \beta_1) = \prod_{i=1}^n {n_i \choose Y_i} \pi_i^{Y_i}(1-\pi_i)^{n_i - Y_i}\]
+
+We want to maximize this, so 
+
+\[\log L(\beta_0, \beta_1) = \sum_{i=1}^n \left(\log {n_i \choose Y_i} + Y_i \log \pi_i + (n-Y_i)\log(1-\pi_i)\right)\]
+
+\section{Multiple Logistic Regression}
+
+We can fit a multiple logistic regression model by replacing $\beta_0 + \beta_1X$ with 
+
+\[X_i' \beta = \beta_0 + \beta_{1}X_{i1} + \cdots + \beta_{i,p-1}X_{i,p-1} \]
+\[E(Y) = \frac{\beta'X}{1 + \beta'X}\]
+\[\log\frac{\pi}{1-\pi} = \beta'X\]
+
+\subsection{Inference on Model Parameters}
+
+The maximum likelihood estimators are asymptotically normal with variances and covariances that are functions of the second order partial derivatives of the likelihood function. Let 
+
+\[G = \left(\frac{\partial^2 L(\beta)}{\partial\beta_i \partial\beta_j}\right)\]
+be the Hessian were 
+\[\log L(\beta) = \sum_{i=1}^n Y_i (X'\beta) - \sum_{i=1}^n \log(1 + e^{X_i' \beta})\]
+The linear predictor is $X_i'\hat{\beta}$ and the fitted values are 
+
+\[\hat{Y}_i = \hat{\pi}_i = \frac{\exp(X_i'\hat{\beta})}{1 + \exp(X'_i\hat{\beta})}\]
+
+It can be shown that $\hat{\beta}$ is an unbiased estimator, and the variance is 
+\[\Var(\hat{\beta}) = (X'VX)^{-1}\]
+Where $V = \diag(n\hat{\pi}_i(1-\hat{\pi}_i))$. Furthermore, we have 
+\[\frac{\hat{\beta}_k - \beta_k}{s(\hat{\beta}_k)} \sim N(0,1), \ k = 0, \ldots, p-1\]
+\noindent
+We use this for testing and constructing confidence intervals.
+
+\section{Testing}
+
+To test whetever several coefficients are 0, we use the likelihood ratio test where we compare the full model (FM) with the reduced model (RM). We define 
+\[G^2 = -2 \log \left(\frac{L(RM)}{L(FM)}\right) = 2 \log \left(\frac{L(FM)}{L(RM)}\right)\]
+which is asymptotically $\chi^2$ with degrees of freedom equal to the difference in the number of parameters in the two models if the null hypothesis is true. We reject for large values of $G^2$, when $G^2 > \chi^2_{p-q}$. 
+
+In the case of simple logistic regression, the full model is the one that has been fitted, whereas the reduced model is the one with constant probability of success, 
+
+\[E(Y) = \pi = \frac{e^{\beta_0}}{1 + e^{\beta_0}}\]
+
+The maximum likelihood estimator of $\pi$ in the reduced model is $\hat{\pi} = \frac{Y}{n}$, so,
+
+\[\ln L(RM) = y\ln y + (n-y)\ln(n-y) - n\ln n\]
+
+Thus, the likelihood ratio statistcis for testing significance of regression is 
+
+\[L = 2(\ln L(FM) - \ln L(RM)) = 2\left(\sum_{i=1}^n y_i\ln \hat{\pi}_i + \sum_{i=1}^n (n_i-y_i)\ln(1-\hat{\pi}_i) - y\ln y + (n-y)\ln(n-y) - n \ln n\right)\]
+
+
+\subsection{Test for Goodness of Fit}
+
+
+We would like to test 
+
+\[H_0: E(Y) = \left(1+e^{-X'\beta}\right)^{-1}\]
+\[H_1: E(Y) \neq \left(1+e^{-X'\beta}\right)^{-1}\]
+
+We will make use of a Pearson chi-square goodness of fit test. The expected number of successes is $n_i\hat{\pi}_i$, and the expected number of failures is $n_i(1-\hat{\pi}_i)$. Then, the Pearson chi-square statistic is
+
+\[\chi^2 = \sum_{i=1}^n \left(\frac{(Y_i-n_i\hat{\pi}_i)^2}{n_i\hat{\pi}_i} + \frac{(n_i - Y_i - n_i(1-\hat{\pi}))^2}{n_i(1-\hat{\pi}_i)}\right) = \sum_{i=1}^n \frac{y_i-n_i\hat{\pi}_i}{n_i\hat{\pi}_i(1-\hat{\pi}_i)}\]
+\noindent
+We reject the null hypothesis when 
+
+\[\chi^2 > \chi^2_{\alpha, n-p}\]
+
+\subsection{Hosmer-Lemenshow Test}
+
+WHen there are no replicates on the regressor variables, the observations can be grouped to preform a goodness-of-fit test known as the Hosmer-Lemenshow test. In this procedure, we classify the observations into $g$ groups, generally $g=10$ is used. The observed number of successes $O_j$ and failures $N_j - O_j$ are compared with the expected frequency of each group, $N_j\bar{\pi}_j$ where $N_j$ is the number of observations in the $jth$ group. The average estimated success probability in the $jth$ group is 
+\[\bar{\pi}_j = \sum_{i \in \text{group }j} \frac{\hat{\pi}_i}{N_j}\]
+The Hosmer-Lemenshow statistic is just a Pearson chi-square goodness-of-fit statistic comparing observed and expected frequences, and is given as 
+
+\[HL = \sum_{j=1}^g \frac{(O_j - N_j\hat{\pi}_j)^2}{N_j\hat{\pi}_j} + \sum_{j=1}^g \frac{(N_j - O_j - N_j(1-\hat{\pi}_j))^2}{N_j(1-\hat{\pi}_j)} = \sum_{j=1}^j \frac{(O_j - N_j\hat{\pi}_j)^2}{N_j\hat{\pi}_j(1-\hat{\pi}_j)}\]
+
+If the fitted model is correct, the HL statistic follows a chi-square distribution with $g-1$ degrees of freedom. We reject the null hypothesis for large values of HL.
+
+\subsection{Deviance of Goodness of Fit Test}
+
+Here we compare the current model to a saturated model where each observation (or group when $n_i > 1$) has is own probability of success estimated by $Y_i / n_i$. Under the reduced model 
+
+\[E(Y_i) = \left(1 + e^{-X_i'\beta}\right)^{-1}\]
+and under the saturated model (also called the full model)
+\[E(Y_i) = \pi_i\]
+The deviance goodness of fit statistic is 
+\[\dev(X_0, X_1, \ldots, X_{p-1}) = -2 (\ln L(RM) - \ln(FM)) = -2 \sum_{i=1}^n \left(Y_i\ln\left(\frac{Y_i}{n_i\hat{\pi}_i}\right)\right) - 2\sum_{i=1}^n \left((n_i-Y_i)\ln\left(\frac{n_i - Y_i}{n_i(1-\hat{\pi}_i)}\right)\right)\]
+
+
+\section{Diagonistic Measures for Logistic Regression}
+
+For examining adequeacy of the fitted model, we will only consider the ungrouped case. Residuals can be used to diagnose adequeacy. THe ordinary residuals are defined as
+
+\[e_i = Y_i - \hat{\pi}_i\]
+These do not have constant variance. The deviance residuals are 
+
+\[d_i = \pm \left\{2\left[Y_i \ln\left(\frac{Y_i}{n_i\hat{\pi}_i}\right) + (n_i-Y_i)\ln\left(\frac{n_i-Y_i}{n_i(1-\hat{\pi}_i)}\right)\right]\right\}^{1/2}\]
+where the sign of $d_i$ is the same as $e_i$. We compute the standardized Pearson residuals as
+
+\[r_i = \frac{Y_i - \hat{\pi}_i}{\sqrt{\hat{\pi}_i (1- \hat{\pi}_i)}}\]
+which do not have unit variance. The studentized deviance Pearson residuals are
+\[sr_i = \frac{r_i}{\sqrt{1-h_{ii}}}\]
+where $h_{ii}$ is the $ith$ diagonal entry of the hat matrix, 
+\[H = V^{1/2}X(X'VX)^{-1}V^{1/2}\]
+where $V$ is the diagonal matrix with $V_{ii} = n_i\hat{\pi}_i(1-\hat{\pi}_i)$. We can plot the deviance and the studentized Pearson residuals to check for outliers. A normal probability plot of the deviance residuals can be used to check for the fit of the model and for outliers. A plot of the deviance vs the estimated probability of success can be used to determine where the model is poorly fitted, at high or low probabilities.\\
+
+For an adequate model, $E(Y_i) = \hat{\pi}_i$, and the plots of $sr_i$ vs $\hat{\pi}_i$ and $sr_i$ vs linear predictors $X_i'\beta$ should show a smooth horizontal Lowess line through 0. Similarly for a plot of $d_i$ vs $\hat{\pi}_i$ and $d_i$ vs $X_i'\beta$.
+
+\section{Detection of Influential Observations}
+
+In order to flag influential cases, we consider deleting one observation at a time and measuring its effects on both the $\chi^2$ statistic and the $\dev$ statistic. We plot these vs $i$, and look for spikes which indicate influential observations. Similarly, we can plot these vs $\hat{\pi}_i$.
+
+\subsection{Influence on the Fitted Linear Predictor}
+
+Cook's distance here measures the standardized change in the linear predictor $X'\beta$ when the $ith$ case is deleted. Indexed plots of Cook's distance identify cases that have a large influence on the fitted predictor. Indexed plots of the leverage values $h_{ii}$ help to identify outliers in the $X$ space. In all cases, visual assessments are needed because there is no actual rule for flagging outlier or influential cases.
+
+
+\section{Poisson Regression}
+
+In Poisson regression, we have counting data $Y$ which follows a Poisson distribution with mean $\mu$, and variance $\mu$, 
+
+\[f(y) = \frac{e^{-\mu}\mu^y}{y!}\]
+The model is then given as 
+\[Y_i = \mu_i + \epsilon_i, \ i = 1, \ldots, n\]
+We assume there is a function $g$ which relates the mean of the response to a linear predictor,
+\[g(\mu_i) = \eta_i = \beta_0 + \beta_1X_1 + \cdots + \beta_kX_k\]
+The function $g$ is usually called the link function. The relationship between the mean and the linear predictor is 
+
+\[\mu_i = g^{-1}(\eta_i) = g^{-1}(X_i'\beta)\]
+There are several common link functions that are used with the Poisson distribution, one of them is the identity link, 
+\[g(\mu_i) = \mu_i = X_i'\beta\]
+Another popular function is the log link,
+\[g(\mu_i) = \ln(\mu_i) = X_i'\beta\]
+The relationship between the mean of the response and the linear predictor is then 
+\[\mu_i = g^{-1}(X_i'\beta) = e^{X_i'\beta}\]
+
+Inference is done on the Poisson model the same as in the case of logistic regression. 
+
+\section{Generalized Linear Models}
+
+Both the logistic regression and Poisson regression models are particular examples of a more general linear model (GLM). The response is assumed to have a distribution which is a member of the exponential family of distributions, 
+\[f(y_i, \theta_i, \phi) = \exp\left(\frac{y_i\theta - b(\theta_i)}{a(\phi)} + h(y_i, \phi)\right)\]
+Here, $\mu = E(Y) = \frac{db(\theta_i)}{d\theta_i}$, and $\Var(Y) = \frac{d^2b(\theta_i)}{d\theta_i^2}a(\phi)$. The basic idea is to develop a linear model for a function of the mean. Set $\eta_i = g(\mu_i) = X_i'\beta$. The function $g$ is the link function, for logistic regression 
+
+\[f(y_i,\theta_i, \phi) = {n_i \choose y_i}p^{y_i}(1-p)^{n-y_i} = \exp\left(y_i \ln\left(\frac{p}{1-p}\right) + n\ln (1-p) + \ln{n_i \choose y_i}\right)\]
+For Poisson regression,
+
+\[f(y_i, \theta_i, \phi) = \frac{e^{-\lambda}\lambda^{y_i}}{y_i!}= \exp\left(y_i\ln \lambda - \lambda - \ln(y_i!)\right)\]
