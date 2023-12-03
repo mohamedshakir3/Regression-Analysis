@@ -50,6 +50,21 @@
 \DeclareMathOperator{\atanh}{arctanh}
 
 
+\DeclareMathOperator{\vif}{VIF}
+\DeclareMathOperator{\aic}{AIC}
+\DeclareMathOperator{\bic}{BIC}
+\DeclareMathOperator{\sch}{Sch}
+\DeclareMathOperator{\bias}{Bias}
+\DeclareMathOperator{\press}{PRESS}
+\DeclareMathOperator{\fin}{IN}
+\DeclareMathOperator{\fout}{OUT}
+
+\DeclareMathOperator{\odds}{odds}
+\DeclareMathOperator{\diag}{diag}
+\DeclareMathOperator{\dev}{Dev}
+
+
+
 
 \newtheorem{theorem}{Theorem}[section]
 \newtheorem{definition}{Definition}[section]
@@ -549,5 +564,162 @@ label={[anchor=west, fill=green]north west:\textbf{#1:}},
         \[MSE_W = \frac{\sum_{i=1}^n w_i(y_1 - \hat{y}_i)^2}{n-p} = \frac{\sum_{i=1}^nw_ie_i^2}{n-p}\]
     \end{pinkbox}\\[-2ex]
     \end{blackbox}
-\end{multicols*}
-\end{document}
+    \begin{blackbox}{Diagnostics for Leverege}
+        Leverge of the $ith$ observation is defined as $h_{ii}$,\\[-1ex] 
+        \[h_{ii} = \frac{1}{n} + \frac{(X_i-\bar{X})^2}{\sum_{i=1}^n (X_i-\bar{X})^2}\]
+        We can also use the mean with the $ith$ observation removed, $\bar{X}_{(i)}$,\\[-3ex]
+        \[h_{ii} = \frac{1}{n} + \left(\frac{n-1}{n}\right)^2\frac{(X_i-\bar{X}_{(i)})}{\sum_{i=1}^n(X_i-\bar{X})^2}\]
+        If $h_{ii} > 2p/n$, $ith$ observation is considered influential.
+    \end{blackbox}
+    \begin{blackbox}{Measures of Influence}
+        \begin{redbox}{Difference in fit}
+            Difference in fit is defined as \\[-2ex]
+            \[DFFITS_i = \frac{\hat{Y}_i - \hat{Y}_{i(i)}}{\sqrt{MSE_{(i)}h_{ii}}} = t_i \left(\frac{h_{ii}}{1-h_{ii}}\right)^2\]
+            where $t_i$ is the Studentized deleted residual, \\[-2ex]
+            \[t_i = e_i\left(\frac{n-p-1}{SSE(1-h_{ii})-e_i^2}\right)^{\frac{1}{2}}\]
+            DFFITS represents the number of estimated standard deviations of $\hat{Y}_i$ that the fitted value increases or decreases. If $X_i$ is an outlier with high liverage, then $|DFFITS_i|$ will be large. We class influential cases if\\[-4ex]
+            \[DFFITS_i > \begin{cases}
+                1 & \text{for small data sets}\\
+                2\sqrt{p/n} & \text{for large data sets}
+            \end{cases}\]            
+        \end{redbox}
+        \begin{bluebox}{Cook's Distance}
+            Cook's distance considers the influence of the $ith$ observation on the entire regression line, \\[-2ex]
+            \[D_i = \frac{\sum_{j=1}^n (\hat{Y}_j - \hat{Y}_{j(i)})^2}{pMSE} = \frac{e_i^2}{pMSE}\left(\frac{h_{ii}}{(1-h_{ii})^2}\right)\]
+            $D_i$ is large if the residual is large and leverage is moderate, or if residual is moderate and leverage is large, or both. Influential cases are $D_i > 1$.
+        \end{bluebox}
+        \begin{brownbox}{Difference in Coefficients}
+            DFBETAS are the differences in the estimated regression coefficients with and without the $ith$ observation, \\[-4ex]
+            \[DFBETAS_{(i)} = \frac{\hat{\beta}_k - \hat{\beta}_{k(i)}}{\sqrt{MSE_{(i)c_{ii}}}}\]
+            $c_{ii}$ is the $ith$ diagonal entry of $(X'X)^{-1}$. Large value of DFBETAS means large impact of the $ith$ case on the $kth$ coefficient. \\[-2ex]
+            \[DFBETAS_{(i)} > \begin{cases}
+                2/\sqrt{n} & \text{for large $n$}\\
+                1 & \text{for small $n$}
+            \end{cases}\]
+        \end{brownbox}\\[-2ex]
+    \end{blackbox}
+    \begin{blackbox}{Polynomial Regression}
+        A $k$-order polynomial regression in one variable \\[-2ex]
+        \[Y = \beta_0 + \beta_1X + \beta_2X^2 + \cdots + \beta_kX^k + \epsilon\]
+        $k$ should be as low as possible, inversion of $X'X$ will be inaccurate. Orthogonal polynomials are used to simply the fitting process,\\[-3ex]
+        \[Y_i = \beta_0P_0(X_i) +  \beta_1P_1(X_i) + \beta_2P_2(X_i) + \cdots + \beta_kX^k + \epsilon\]
+        where $P_j$ is a $j$ order polynomial\\[-3ex]
+        \[\sum_{i=1}^n P_j(X_i)P_l(X_i) = 0, \ j\neq l\]
+        \[P_0(X_i) = 1\]
+        Least squares estimates are given by \\[-2ex]
+        \[\hat{\beta}_j = \frac{\sum_{i=1}^n P_j(X_i)Y_i}{\sum_{i=1}^n P_j^2(X_i)}, \ j=0,1,\ldots,k\]
+        Advantage of this is that the model can be fitted sequentially, can be done my computers so this is not as important. With multiple variables, include them cross terms,\\[-5ex]
+        \[Y = \beta_0 + \beta_1X_1 + \beta_2X_2 + \beta_{11}X_1^2 + \beta_{22}X_2^2 + \beta_{12}X_1X_2 + \epsilon\]
+        \begin{brownbox}{Indicator Regression}
+            With qualitative, indicator functions can be used. 
+            Example of this, if you want to fit a model as a function of gender,\\[-3ex]
+            \[Y = \beta_0 + \beta_1X_1 + \beta_2X_2 + \epsilon\]
+
+            With $X_2$ being the gender variable, so \\[-4ex]
+
+            \[Y = \begin{cases}
+            \beta_0 + \beta_1X_1 + \beta_2 + \epsilon & \text{Male}\\
+            \beta_0 + \beta_1X_1 + \epsilon & \text{Female}
+            \end{cases}\]
+        \end{brownbox}\\[-2ex]
+    \end{blackbox}
+    \begin{blackbox}{Multicolinearity}
+        Symptoms of multicolinearity:
+        \begin{enumerate}[leftmargin=7pt]
+            \item Large variation in coefficients when a new variable is added /deleted.
+            \item Non-significant results in individual tests on the coefficients of important variables.
+            \item Large coefficients of simple correlation between pairs of variables. 
+            \item Wide confidence interval for the regression coefficients of important variables.
+        \end{enumerate}
+        Variance inflation factor (VIF) is defined as \\[-2ex]
+        \[\vif_j = C_{jj} = (1-R^2_j)^{-1}\]
+        where $R^2_j$ is the coefficient of multiple determinination. If $\vif_j > 10$, this is an indication that multicolinearity exists.\\
+    \end{blackbox}
+    \begin{blackbox}{Detecting Multicollinearity}
+        Consider 2 predictors $X_1$,$X_2$, if they are standardized then \\[-4ex]
+        \[(X'X) = \frac{1}{1-r_{12}^2}\begin{pmatrix}
+            1 & r_{12}\\
+            r_{12} & 1
+        \end{pmatrix}\]
+        where $r_{12}$ is the correlation. The covariance matrix of the coefficients is \\[-3ex]
+        \[\sigma^2(X'X)^{-1} = \sigma^2 \frac{1}{1-r_{12}^2}\begin{pmatrix}
+            1 & -r_{12} \\
+            -r_{12} & 1
+        \end{pmatrix}\]
+        As $|r_{12}| \rightarrow 1$, the variance $\Var(\hat{\beta}_k) \rightarrow \infty$, and the covariance $\Cov(\hat{\beta}_1, \hat{\beta}_2) \rightarrow \pm \infty$. The estimates are \\[-2ex]
+        
+        \[\hat{\beta} = (X'X)^{-1}X'Y\]
+        
+        which can be written as the individual estimates\\[-2ex]
+        
+        \[\hat{\beta}_1 = \frac{r_{1Y} - r_{12}}{1-r_{12}^2}, \ \hat{\beta}_2 = \frac{r_{2Y} - r_{12}}{1-r_{12}^2}\]
+        
+        Diagonal elements of $(X'X)^{-1}$ are $C_{jj} = \frac{1}{1-R_j^2}$ where $R_j^2$ is the $R$-square value obtained from the regression of $X_j$ on the other $p-1$ variables. If there is a strong multicollinearity between $X_j$ and the other $p-1$ variables, then \\[-3ex]
+        \[R_j^2 \approx 1, \ \Var(\hat{\beta_j}) = \frac{\sigma^2}{1-R_j^2} \rightarrow \infty\]
+        Multicollinearity can also be detected with the mean variance inflation factor, \\[-3ex]
+        \[\overline{\vif} = \frac{\sum_{k=1}^{p-1}\vif_k}{p-1}\]
+        A value greater than 1 indicates serious multicolinearity.
+        \end{blackbox}
+        \begin{blackbox}{Ridge Regression}
+            A remedy for multicolinearity. Standardize normal equations to get $r_{XX}\hat{\beta} = r_{YX}$. Ridge estimator becomes $\hat{\beta}_R = (r_{XX} + cI)^{-1}r_{YX}$ for some $c \geq 0$. Using penalized least square, \\[-5ex]
+            \[Q = \sum (Y_i - \beta_1X_{i1} - \cdots - \beta_{p-1}X_{i,p-1})^2 + c \sum_{j=1}^{p-1}\beta_j^2\]
+        \end{blackbox}
+        \begin{blackbox}{Mallow's $C_p$ and Akaine Info. Criterion}
+            Mallow's $C_p$ statistic is given as \\[-2ex]
+            \[C_p = \frac{SSE_p}{MSE} - n + 2p\]
+            where $SSE_p = e'_pe_p$, $e_p = (1-H_p)Y$ where $H_p$ is the hat matrix for the p predictors. $\aic$ is based on maximizing expected entropy, and is given as\\[-2ex]
+            \[\aic_p = n\ln(SSE_p) - n\ln n + 2p\]
+            As more variables are included, AICp decreases and the issue becomes whether or not the decrease justifies the inclusion of more variables.
+        \end{blackbox}
+        \begin{blackbox}{Shwartz's Bayesian Criterion and PRESS}
+            There are several Bayesian extension of AIC, such as the Shwartz's Bayesian criterion,
+            \[\bic_{\sch} = n\ln (SEE_p) - n \ln n + p \ln n\]
+            This criterion places a larger penalty on adding regressors as the sample size increases and is the one used in R. We can also minimize prediction sum of squares,
+            \[\press_p = \sum_{i=1}^n(Y_i - \hat{Y}_{(i)})^2 = \sum){i=1}^n\left(\frac{e_i}{1-h_{ii}}\right)^2\]
+        \end{blackbox}
+        \begin{blackbox}{Techniques for Variable Selection}
+            \begin{redbox}{Forward Selection}
+                \begin{itemize}[leftmargin=7pt]
+                    \item \textbf{Step 1:} Begin with no regressors in the model. Compute the $t$-statistic for each regressor and choose the greatest absolute value. A pre selection critical value $F_{\fin}$ is chosen. 
+                    \item \textbf{Step 2:} Choose the next variable using the same criteria. Compute residuals from the regressions of the other regressors on $X_j$, that is the residuals from $\hat{Y} = \hat{\beta}_0 + \hat{\beta}_1X_1$, and $\hat{X}_j = \hat{\alpha}_{0j} + \hat{\alpha}_{1j}X_1$ for $j = 2, \ldots, K$.
+                    \item If $X_2$ is selected, then the largest partial $F$ statistic is $F = SSR(X_2|X_1)/MSE(X_1,X_2)$. If $F > F_{\fin}$, add $X_2$ to the model. Check to drop a variable if the $t$-value drops below a preset limit. Repeat these steps until the largest $F$ value is no longer $> F_{\fin}$, or all variables are added.
+                \end{itemize}
+            \end{redbox}
+            \begin{brownbox}{Backward Elimination}
+                Begin with all K candidate regressors. Then compute the partial F-statistic for each regressor as if it were the last one to enter the model. The smallest of these partial F-statistics is compared with a preselected F-value, $F_{\fout}$. If the smallest partial F-value is less than $F_{\fout}$, remove that regressor, and refit the model. Calculate new partial F-statistic, and repeat this process. Stop when the smallest partial F value is not less than the preselected cutoff value, $F_{\fout}$. 
+            \end{brownbox}
+            \begin{pinkbox}{Stepwise Regression}
+                In each step, all regressors entered into the model
+                thus far are reassesed with their partial $F$ statistics to see if it has become redundant. If the $F$ statistic is less than $F_{\fout}$, then it is removed. Generally $F_{\fin} > F_{\fout}$ so it makes it harder to add variables than to remove them.
+            \end{pinkbox}\\[-2ex]
+        \end{blackbox}
+        \begin{blackbox}{Logistic Regression}
+            Logistic distribution
+            \[f(x) = \frac{e^x}{(1+e^{x})^2}\]            
+            Cumulative distribution function
+            \[F(t) = \frac{e^t}{1+e^t}\]
+            $E(X) = 0$, $\Var(X) = \pi/3$. Suppose $Y$ is a binary response variable,
+            \[Y_i = \begin{cases}
+                1 & \beta^*_0 + \beta^*_1X_i + \epsilon^*_i < k\\
+                0 & \beta^*_0 + \beta^*_1X_i + \epsilon^*_i > k
+            \end{cases}\]
+            $\pi_i = P(Y_i = 1) = \frac{e^{\beta_0 + \beta_1X_1}}{1 + e^{\beta_0 + \beta_1X_1}}$. $\beta_0 = k - \beta_0^*$, $\beta_1 = -\beta_1^*$.
+            \begin{bluebox}{Estimating Parameters}
+                Log-odds is defined as \\[-2ex]
+                \[\ln\left(\frac{\pi_i}{1-\pi_i}\right) = \beta_0 + \beta_1 X_i\]
+                Estimates for $\beta_0$, $\beta_1$ must be obtained numerically, 
+                \[\hat{\pi} = \frac{\exp(\hat{\beta}_0 + \hat{\beta}_1X_i)}{1 + \exp(\hat{\beta}_0 + \hat{\beta}_1X_i)}\]
+                The ods ratio at a point $X_0$ is defined as 
+                \[\hat{O}_R = \frac{\odds_{X_0+1}}{\odds_{X_0}} = e^{\hat{\beta}_1}\]
+                With repeat observations, $Y_i \sim \Bin(n_i,\pi_i)$, 
+                \[L(\beta_0, \beta_1) = \prod_{i=1}^n {n_i \choose Y_i} \pi_i^{Y_i}(1-\pi_i)^{n_i - Y_i}\]
+            \end{bluebox}
+            For multiple linear regression, $X_i'\beta = \beta_0 + \beta_1X_{i1} + \cdots + \beta_{1,p-1}X_{i,p-1}$, $E(Y) = \frac{\beta'X}{1 + \beta'X}$, $log\frac{\pi}{1-\pi} = \beta'X$.
+            \begin{brownbox}{Testing}
+                To test if several coefficients are 0, use
+                \[G^2 = -2\ln \left(\frac{L(RM)}{L(FM)}\right) = 2\ln \left(\frac{L(FM)}{L(RM)}\right)\]
+            \end{brownbox}
+        \end{blackbox}
+    \end{multicols*}
+    \end{document}
+    

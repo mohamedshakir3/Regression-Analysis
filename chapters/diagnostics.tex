@@ -44,7 +44,7 @@ We can measure the difference in fit by comparing the sum of squares with and wi
 where $t_i$ represents the Studentized deleted residual 
 \[t_i = e_i\left(\frac{n-p-1}{SSE(1-h_{ii})-e_i^2}\right)^{\frac{1}{2}}\]
 
-This shows that we can calculate the difference in fit using the error sum of squares and the hat matrix. The value for $DFFITS_i$  represents the number of estimated standard deviations of $\hat{Y}_i$ the the fitted value increases or decreases with the inclusion of the $i^{th}$ observation. If the $i^{th}$ observation is an outlier and has high liverage, then 
+This shows that we can calculate the difference in fit using the error sum of squares and the hat matrix. The value for $DFFITS_i$  represents the number of estimated standard deviations of $\hat{Y}_i$ that the fitted value increases or decreases with the inclusion of the $i^{th}$ observation. If the $i^{th}$ observation is an outlier and has high liverage, then 
 \[\left(\frac{h_{ii}}{1-h_{ii}}\right)^{\frac{1}{2}} > 1\]
 and $DFFITS$ will be large in absolute value. Influential cases are flagged for small datasets if 
 \[|DFFITS_i| > 1\]
@@ -56,7 +56,7 @@ For large datasets, we use
 Cook's distance considers the influence of the $i^{th}$ observation on the entire regression line. We define Cook's distance as
 
 \[D_i = \frac{\sum_{j=i}^n(\hat{Y}_j - \hat{Y}_{j(i)})^2}{pMSE} = \frac{e_i^2}{pMSE}\left(\frac{h_{ii}}{(1-h_{ii})^2}\right)\]
-Cook's distance is large if the residual is large and the leverage is moderate, or if the residual is moderate and teh leverage is large, or if both or large. Influential cases are flagged wehn $D_i > 1$. 
+Cook's distance is large if the residual is large and the leverage is moderate, or if the residual is moderate and the leverage is large, or if both are large. Influential cases are flagged when $D_i > 1$. 
 
 \subsection{Difference in Coefficents}
 
@@ -65,6 +65,6 @@ The \textbf{DFBETAS} are the differences in the estimated regression coefficient
 \[DFBETAS_{(i)} = \frac{\hat{\beta}_k - \hat{\beta}_{k(i)}}{\sqrt{MSE_{(i)}c_ii}}\]
 where $c_{ii}$ is the $i^{th}$ diagonal entry of $(X'X)^{-1}$. A large value of $DFBETAS_{(i)}$ indicates that the $i^{th}$ observation has a large effect on the $k^{th}$ regression coefficent. Influential cases are flagged if
 \[DFBETAS_{(i)} > \begin{cases}
-    2/\sqrt{n} & \text{for small datasets} \\
-    2\sqrt{p/n} & \text{for large datasets}
+    1 & \text{for small datasets} \\
+    2/\sqrt{n} & \text{for large datasets}
 \end{cases}\]

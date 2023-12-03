@@ -21,8 +21,8 @@ Consider the case of two predictor variables $X_1$ and $X_2$. If the variables a
 \end{pmatrix}\]
 where $r_{12}$ is the correlation between the two variables. The variance covariance matrix of the coefficients is given by
 \[\sigma^2(X'X)^{-1} = \sigma^2 \frac{1}{1-r_{12}^2}\begin{pmatrix}
-    1 & r_{12} \\
-    r_{12} & 1
+    1 & -r_{12} \\
+    -r_{12} & 1
 \end{pmatrix}\]
 As $|r_{12}| \rightarrow 1$, the variance $\Var(\hat{\beta}_k) \rightarrow \infty$, and the covariance $\Cov(\hat{\beta}_1, \hat{\beta}_2) \rightarrow \pm \infty$ depending on if $r_{12} \rightarrow +1$ or $r_{12} \rightarrow -1$. The estimates are 
 
@@ -64,7 +64,7 @@ The model then becomes
 \[Y_i^* = \sum_{k=1}^{p-1} \beta_i^*X_{ik}^* + \epsilon_i^*\]
 \[\beta_k = \left(\frac{s_Y}{s_k}\right)\beta_k^*\]
 \[\beta_0 = \bar{Y} - \sum_{i=1}^{k-1}\beta_i\bar{X}_i\]
-\[r_{XX}\hat{\beta}^* = r^{YX}\]
+\[r_{XX}\hat{\beta}^* = r_{YX}\]
 where $r_{XX}$ is the correlation matrix 
 \[r_{XX} = \begin{pmatrix}
     1 & r_{12} & r_{13} & \cdots & r_{1k}\\
