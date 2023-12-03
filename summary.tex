@@ -561,7 +561,7 @@ label={[anchor=west, fill=green]north west:\textbf{#1:}},
         \textbf{New Weighted Model:} $Y_w = X_w\boldsymbol{\beta} + \epsilon_W$, estimate becomes\\[-2ex] 
         \[\boldsymbol{\hat{\beta}} = (X_W'X_W)^{-1}X_W'Y_W = (X'WX)^{-1}X'WY\]
         Weighted mean square error is\\[-2ex]
-        \[MSE_W = \frac{\sum_{i=1}^n w_i(y_1 - \hat{y}_i)^2}{n-p} = \frac{\sum_{i=1}^nw_ie_i^2}{n-p}\]
+        \[MSE_W = \frac{\sum_{i=1}^n w_i(y_i - \hat{y}_i)^2}{n-p} = \frac{\sum_{i=1}^nw_ie_i^2}{n-p}\]
     \end{pinkbox}\\[-2ex]
     \end{blackbox}
     \begin{blackbox}{Diagnostics for Leverege}
@@ -694,11 +694,11 @@ label={[anchor=west, fill=green]north west:\textbf{#1:}},
             \end{pinkbox}\\[-2ex]
         \end{blackbox}
         \begin{blackbox}{Logistic Regression}
-            Logistic distribution
+            Logistic distribution\\[-3ex]
             \[f(x) = \frac{e^x}{(1+e^{x})^2}\]            
-            Cumulative distribution function
+            Cumulative distribution function\\[-2ex]
             \[F(t) = \frac{e^t}{1+e^t}\]
-            $E(X) = 0$, $\Var(X) = \pi/3$. Suppose $Y$ is a binary response variable,
+            $E(X) = 0$, $\Var(X) = \pi/3$. Suppose $Y$ is a binary response variable,\\[-2ex]
             \[Y_i = \begin{cases}
                 1 & \beta^*_0 + \beta^*_1X_i + \epsilon^*_i < k\\
                 0 & \beta^*_0 + \beta^*_1X_i + \epsilon^*_i > k
@@ -707,18 +707,64 @@ label={[anchor=west, fill=green]north west:\textbf{#1:}},
             \begin{bluebox}{Estimating Parameters}
                 Log-odds is defined as \\[-2ex]
                 \[\ln\left(\frac{\pi_i}{1-\pi_i}\right) = \beta_0 + \beta_1 X_i\]
-                Estimates for $\beta_0$, $\beta_1$ must be obtained numerically, 
+                Estimates for $\beta_0$, $\beta_1$ must be obtained numerically, \\[-2ex]
                 \[\hat{\pi} = \frac{\exp(\hat{\beta}_0 + \hat{\beta}_1X_i)}{1 + \exp(\hat{\beta}_0 + \hat{\beta}_1X_i)}\]
-                The ods ratio at a point $X_0$ is defined as 
+                The ods ratio at a point $X_0$ is defined as \\[-2ex]
                 \[\hat{O}_R = \frac{\odds_{X_0+1}}{\odds_{X_0}} = e^{\hat{\beta}_1}\]
-                With repeat observations, $Y_i \sim \Bin(n_i,\pi_i)$, 
+                With repeat observations, $Y_i \sim \Bin(n_i,\pi_i)$,\\[-2ex] 
                 \[L(\beta_0, \beta_1) = \prod_{i=1}^n {n_i \choose Y_i} \pi_i^{Y_i}(1-\pi_i)^{n_i - Y_i}\]
             \end{bluebox}
             For multiple linear regression, $X_i'\beta = \beta_0 + \beta_1X_{i1} + \cdots + \beta_{1,p-1}X_{i,p-1}$, $E(Y) = \frac{\beta'X}{1 + \beta'X}$, $log\frac{\pi}{1-\pi} = \beta'X$.
-            \begin{brownbox}{Testing}
-                To test if several coefficients are 0, use
+            \begin{brownbox}{Testing on Coefficients}
+                To test if several coefficients are 0, use\\[-2ex]
                 \[G^2 = -2\ln \left(\frac{L(RM)}{L(FM)}\right) = 2\ln \left(\frac{L(FM)}{L(RM)}\right)\]
+                \vspace{-2ex}
+                \[\ln L(FM) =\sum_{i=1}^n y_i\ln \hat{\pi}_i + \sum_{i=1}^n (n_i-y_i)\ln(1-\hat{\pi}_i)\]
+                \[\ln L(RM) = y\ln y + (n-y)\ln(n-y) - n\ln n\]
+                We reject the null hypothesis if $G^2 > \chi^2_{p-1}$. 
             \end{brownbox}
+            \begin{pinkbox}{Goodness of Fit}
+                We want to test $H_0: E(Y) = \left(1 + e^{-X'\beta}\right)^{-1}$. Use Pearson chi-square statistic,reject when $\chi^2 > \chi^2_{n-p}$.\\
+                \[\chi^2 = \sum_{i=1}^n \frac{y_i-n_i\hat{\pi}_i}{n_i\hat{\pi}_i(1-\hat{\pi}_i)}\]
+                
+            \end{pinkbox}\\[-2ex]
+        \end{blackbox}
+        \begin{blackbox}{More on Testing}
+            \begin{redbox}{Homser-Lemenshow Test}
+                The Hosmer-Lemenshow statistic is Pearson chi-square goodness-of-fit statistic comparing observed and
+                expected frequences, and is given as\\[-3ex]
+                \[HL = \sum_{j=1}^j \frac{(O_j - N_j\hat{\pi}_j)^2}{N_j\hat{\pi}_j(1-\hat{\pi}_j)}\]
+                \vspace{-2ex}
+
+                If the fitted model is correct, $HL \sim \chi^2_{g-1}$. Reject for large values of HL.
+            \end{redbox}
+            \begin{pinkbox}{Deviance Goodness of Fit}
+                Uses likelihood ratio to compare reduced model $E(Y_i) = \left(1 + e^{-X_i'\beta}\right)^{-1}$ and full model $E(Y_i) = \pi_i$, \\[-2ex]
+                \[\dev(X_0, X_1, \ldots, X_{p-1}) = -2 (\ln L(RM) - \ln(FM))\]
+                \vspace{-3ex}
+
+                We reject when $\dev > \chi^2_{n-p}$.
+            \end{pinkbox}\\[-2ex]
+        \end{blackbox}
+        \begin{blackbox}{Diagonistics Measures for Logistic Regression}
+
+            The residuals are defined as $e_i = Y_i - \hat{\pi}_i$, these do not have constant variance. The deviance residuals are \\[-3ex] 
+            \[d_i = \pm \left\{2\left[Y_i \ln\left(\frac{Y_i}{n_i\hat{\pi}_i}\right) + (n_i-Y_i)\ln\left(\frac{n_i-Y_i}{n_i(1-\hat{\pi}_i)}\right)\right]\right\}^{1/2}\]
+            The standardized Pearson residuals as $r_i = \frac{Y_i - \hat{\pi}_i}{\sqrt{\hat{\pi}_i (1- \hat{\pi}_i)}}$
+            which do not have unit variance. The studentized deviance Pearson residuals are\\[-3ex]
+            \[sr_i = \frac{r_i}{\sqrt{1-h_{ii}}}\]
+            $h_{ii}$ is the $ith$ diagonal entry of the hat matrix, $H = V^{1/2}X(X'VX)^{-1}V^{1/2}$. $V$ is the diagonal matrix with $V_{ii} = n_i\hat{\pi}_i(1-\hat{\pi}_i)$. 
+            For an adequate model, $E(Y_i) = \hat{\pi}_i$, and the plots of $sr_i$ vs $\hat{\pi}_i$ and $sr_i$ vs linear predictors $X_i'\beta$ should show a smooth horizontal Lowess line through 0. Same for a plot of $d_i$ vs $\hat{\pi}_i$ and $d_i$ vs $X_i'\beta$.
+
+            \begin{pinkbox}{Detecting Influential Cases}
+                Delete one observation at a time and measuring its effects on the $\chi^2$ and the $\dev$ statistic. Plot these vs $i$, and look for spikes which indicate influential observations. Similarly, we can plot these vs $\hat{\pi}_i$.
+            \end{pinkbox}\\[-2ex]
+        \end{blackbox}
+        \begin{blackbox}{Poisson Regression and GLM's}
+            Poission regression uses Poisson distribution, $f(y) = \frac{e^{-\mu}\mu^y}{y!}$.
+            The model is $Y_i = \mu_i + \epsilon_i$, $\mu_i = e^{X_i'
+            \beta}$. For GLM's, response is assumed to have some exponential distributio, $\mu = E(Y) = \frac{db(\theta_i)}{d\theta_i}$, and $\Var(Y) = \frac{d^2b(\theta_i)}{d\theta_i^2}a(\phi)$ \\[-2ex]
+            \[f(y_i, \theta_i, \phi) = \exp\left(\frac{y_i\theta - b(\theta_i)}{a(\phi)} + h(y_i, \phi)\right)\]
         \end{blackbox}
     \end{multicols*}
     \end{document}
