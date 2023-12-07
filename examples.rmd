@@ -494,4 +494,175 @@ plot(new_model)
 
 ```
 
-We can see that the qq-plot looks better now and the residuals appear fairly normally distributed, as well as the residuals vs fitted look more random, so we also can conclude that there is no longer an issue with the constant variance assumption. 
+We can see that the qq-plot looks better now and the residuals appear fairly normally distributed, as well as the residuals vs fitted look more random, so we also can conclude that there is no longer an issue with the constant variance assumption. Another approach to this problem is to use another transformation on $y$. Since the reponse variable $y$ is the time, which is count, the simplest probabilistic model for count
+data is the Poisson distribution, thus we transform $y' = \sqrt{y}$, and we plot this model. 
+
+```{r}
+y_prime <- sqrt(Y)
+
+sqrt_y_model <- lm(y_prime ~ X1 + X2, data=delivery)
+
+par(mfrow=c(2,2))
+
+plot(sqrt_y_model)
+```
+
+We see that we get fairly similar results to the boxcox transformation, and can conlude the assumption of constant variance is no longer violated.
+
+
+## Example of Weighted Least Squares
+
+Using the weighted Turkey data, we can fit a model an examine the residuals. 
+
+```{r}
+turkey <- read.table("./Data/weighted.txt",header=TRUE, sep='\t')
+
+
+
+fit <- lm(Y ~ X, data=turkey)
+
+summary(fit)
+
+plot(fit,1)
+```
+
+As we can see, there appears to be a telescoping effect. One way to proceed is to perform the usual regression. Then, group the data using the X variable. Estimate the variances $s^2_i$ of the $Y_i$ for each group. Then fit the variances against the averages of the $X_i$ of the groups. Next we computed averages and variances for subsets of the data and then fitted the variances against the averages.
+
+```{r}
+turkey
+```
+
+We can see that we have many data points at 3, 5.4, 7.8, 9.1, and 10.2. These aren't perfect groupings but there are many points at this $X$ value or very close to it, so we will use these as our groups. Now we can compute the variances at each of these points.
+
+
+```{r}
+
+
+
+s1 <- round(var(turkey[turkey$X == 3, ]$Y),4)
+s2 <- round(var(subset(turkey, X >= 5.34 & X <= 5.45)$Y),4)
+s3 <- round(var(subset(turkey, X >= 7.7 & X <= 7.94)$Y),4)
+s4 <- round(var(subset(turkey, X >= 9.03 & X <= 9.37)$Y),4)
+s5 <- round(var(subset(turkey, X >= 10.03 & X <= 10.5)$Y),4)
+
+s <- c(s1, s2, s3, s4, s5)
+
+df <- data.frame(X = c(3, 5.4, 7.8, 9.1, 10.2), s = s)
+df
+```
+
+So now that we have our dataframe, we can fit a model with $s$ as the response and the averages that we picked, 
+
+```{r}
+fit2 <- lm(s ~ X + I(X^2), data=df)
+summary(fit2)
+```
+
+Now, we have the regression model 
+
+\[\hat{s}^2 = 1.5329 - 0.7334\bar{X} + 0.0883\bar{X}^2\]
+
+The weights are then computes as inverses of the predicted variances,
+
+```{r}
+weights <- 1/predict(fit2, newdata = data.frame(X = turkey$X))
+
+weighted_model <- lm(Y ~ X, data=turkey, weights=weights)
+summary(weighted_model)
+```
+
+The original model was 
+
+
+\[\hat{Y} = -0.579 + 1.14 X\]
+
+The new weighted model becomes 
+
+\[\hat{Y} = -0.89 + 1.16 X\]
+
+# Chapter 6 - Regression Diagnostics and Measures of Influence
+
+We will examine the bank dataset and fit a model to the data. Then examine the residuals and look for any outliers or influential points. 
+
+```{r}
+library(olsrr)
+bank <- read.table("./Data/bank.txt",header=TRUE, sep='\t')
+
+y <- bank$Number.New.accounts
+x <- bank$Minimum.Deposit
+fit <- lm(y~x)
+# Cook's Distance vs. Observations
+ols_plot_cooksd_bar(fit)
+```
+
+From the Cook's distant plot, we see that the 4th observation is influential on the fitted values at all $X$ values. We can look at the plot for DFFITS,
+
+```{r}
+ols_plot_dffits(fit)
+```
+
+We see again that the 4th observation is influential on the 4th fitted value of the model. We can also look at the DFBETAS plot, 
+
+```{r}
+ols_plot_dfbetas(fit)
+```
+
+From the DFBETAS vs Observation plots, we see that the 4th, 7th, and 10th observations are influential on the slope, and the 4th and 7th oberservations are influential on the intercept. To summarize, we can examine the measures of influence with 
+
+```{r}
+influence.measures(fit)
+```
+
+# Chapter 7 - Polynomial and Indicator Regression
+
+## Example using Indicator Variables
+
+We will use the turkey dataset 
+
+```{r}
+turkey <- read.table("./Data/turkey.txt",header=TRUE, sep='\t')
+turkey
+```
+
+We can see that we have a catagorical variable "origin", which has 3 levels, G, V, and W. So, we create 2 dummy variables $Z_1$ and $Z_2$ to represent the levels. In this case, it was done for us with $(Z_1, Z_2) = (0,0) \implies W$, $(Z_1, Z_2) = (0,1) \implies V$, and $(Z_1, Z_2) = (1,0) \implies G$. 1 dummy variables allows for $2^1 = 2$ levels, 2 dummy variables gives us $2^{2} = 4$ levels, and so on. 
+
+We can plot a model using just age and weight, 
+
+```{r}
+model1 <- lm(Weight ~ Age, data=turkey)
+summary(model1) 
+```
+
+We see that there is a significant relationship between age and weight, the $R^2$ value is a bit low at 0.66, we can examine the model adequency. 
+
+```{r, out.width="50%", echo=FALSE}
+plot(model1,1)
+plot(model1,2)
+plot(model1,3)
+plot(model1,4)
+plot(model1,5)
+plot(model1,6)
+```
+
+We can see from the qq-plot, that the normally assumption of the residuals may not be reasonable. We can also see from the residuals vs fitted plot that there is a curve in the data, which tells us that our linear model may not be a good fit. Using the criteria that an observation is influential when Cook's distance $D_i > 1$, we see there are no influential points.
+
+
+Now we can try fitting the model with our 2 dummy variables to see if it improves,
+
+```{r}
+model2 <- lm(Weight ~ Age + Z1 + Z2, data=turkey)
+summary(model2)
+```
+
+We see that all the predictors are significant, and our $R^2$ value has increased significantly. We can examine the model adequency again, 
+
+```{r, out.width="50%", echo=FALSE}
+plot(model2,1)
+plot(model2,2)
+plot(model2,3)
+plot(model2,4)
+plot(model2,5)
+plot(model2,6)
+```
+
+The qq-plot shows the assumption of normally distributed residuals is more reasonable now, and the residuals vs fitted is looking more random, however there still is a slight curve which could require more adjustments. 
