@@ -115,3 +115,11 @@ Then the weighted least squares estimate becomes
 \[\boldsymbol{\hat{\beta}} = (X_W'X_W)^{-1}X_W'Y_W = (X'WX)^{-1}X'WY\]
 We also define the mean square error as 
 \[MSE_W = \frac{\sum_{i=1}^n w_i(y_1 - \hat{y}_i)^2}{n-p} = \frac{\sum_{i=1}^nw_ie_i^2}{n-p}\]
+
+\section{Breusch-Pagen Test}
+
+The Breusch-Pagen test is a test of contant variance, we assume the model is 
+\[\log \sigma^2 = \gamma_0 + \gamma_1X_i\]
+We want to test $H_0: \gamma_1 = 0$. We regress $\epsilon_i^2$ against $X_i$, and compute the regression sum of squares $SSR^*$, then our test statistic is 
+\[\chi^2 = \frac{\frac{SSR^*}{2}}{\frac{SSE}{n}}\]
+Under the null hypothesis, $\chi^2 \sim \chi^2(1)$. We reject the null hypothesis when $\chi^2 > \chi^2_{\alpha}(1)$.

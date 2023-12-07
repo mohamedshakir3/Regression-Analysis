@@ -31,6 +31,9 @@ output:
   fig_caption: yes
 ---
 
+```{r setup, include=FALSE}
+```
+
 # Chapter 2 - Simple Linear Regression
 
 ## Example. Airfreight Data 
@@ -440,3 +443,55 @@ noint <- lm(formula = y~ 0)
 print(noint)
 anova(noint)
 ```
+
+# Chapter 5 - Weighted Least Squared and Transformations 
+
+## Example of checking for model adequecy with BP test
+
+Using the delivery time data, we can examine the model adequecy of 
+
+```{r}
+delivery <- read.table("./Data/delivery.txt",header=TRUE, sep='\t')
+X1 = delivery$Number.of.Cases
+X2 = delivery$Distance
+Y = delivery$Delivery.Time
+fit = lm(Y~X1+X2, data=delivery)
+par(mfrow=c(2,2))
+plot(fit)
+```
+
+We can see in the qq-plot that the residuals do not follow the theoretical quantiles of a normal distribution, so there is likely an issue with the normality assumption of the model. The residuals vs fitted appear to have some pattern resembling a parabola. 
+
+```{r, message=FALSE}
+library(lmtest)
+bptest(fit)
+```
+
+We can see that the p-value that it is low, so we reject the null hypothesis that the variance is constant. We can attempt to remede the issue with the residuals by applying a boxcox transformation. 
+
+```{r, message=FALSE}
+library(MASS)
+boxcox(fit)
+b <- boxcox(fit)
+lambda <- b$x[which.max(boxcox(fit)$y)]
+lambda
+```
+
+Now using our lambda value, we can transform $y$ and refit the model,
+
+```{r}
+n = length(Y)
+
+y_dot <- exp(1/n * sum(log(Y)))
+
+Y_transformed <- (Y^lambda - 1) / (lambda * y_dot^(lambda - 1))
+
+new_model <- lm(Y_transformed ~ X1 + X2, data=delivery)
+
+par(mfrow=c(2,2))
+
+plot(new_model)
+
+```
+
+We can see that the qq-plot looks better now and the residuals appear fairly normally distributed, as well as the residuals vs fitted look more random, so we also can conclude that there is no longer an issue with the constant variance assumption. 

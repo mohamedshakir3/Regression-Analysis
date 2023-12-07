@@ -675,7 +675,7 @@ label={[anchor=west, fill=green]north west:\textbf{#1:}},
             There are several Bayesian extension of AIC, such as the Shwartz's Bayesian criterion,
             \[\bic_{\sch} = n\ln (SEE_p) - n \ln n + p \ln n\]
             This criterion places a larger penalty on adding regressors as the sample size increases and is the one used in R. We can also minimize prediction sum of squares,
-            \[\press_p = \sum_{i=1}^n(Y_i - \hat{Y}_{(i)})^2 = \sum){i=1}^n\left(\frac{e_i}{1-h_{ii}}\right)^2\]
+            \[\press_p = \sum_{i=1}^n(Y_i - \hat{Y}_{(i)})^2 = \sum_{i=1}^n\left(\frac{e_i}{1-h_{ii}}\right)^2\]
         \end{blackbox}
         \begin{blackbox}{Techniques for Variable Selection}
             \begin{redbox}{Forward Selection}
@@ -684,14 +684,17 @@ label={[anchor=west, fill=green]north west:\textbf{#1:}},
                     \item \textbf{Step 2:} Choose the next variable using the same criteria. Compute residuals from the regressions of the other regressors on $X_j$, that is the residuals from $\hat{Y} = \hat{\beta}_0 + \hat{\beta}_1X_1$, and $\hat{X}_j = \hat{\alpha}_{0j} + \hat{\alpha}_{1j}X_1$ for $j = 2, \ldots, K$.
                     \item If $X_2$ is selected, then the largest partial $F$ statistic is $F = SSR(X_2|X_1)/MSE(X_1,X_2)$. If $F > F_{\fin}$, add $X_2$ to the model. Check to drop a variable if the $t$-value drops below a preset limit. Repeat these steps until the largest $F$ value is no longer $> F_{\fin}$, or all variables are added.
                 \end{itemize}
+                \vspace{-2ex}
             \end{redbox}
             \begin{brownbox}{Backward Elimination}
                 Begin with all K candidate regressors. Then compute the partial F-statistic for each regressor as if it were the last one to enter the model. The smallest of these partial F-statistics is compared with a preselected F-value, $F_{\fout}$. If the smallest partial F-value is less than $F_{\fout}$, remove that regressor, and refit the model. Calculate new partial F-statistic, and repeat this process. Stop when the smallest partial F value is not less than the preselected cutoff value, $F_{\fout}$. 
+                \vspace{-1ex}
             \end{brownbox}
             \begin{pinkbox}{Stepwise Regression}
                 In each step, all regressors entered into the model
                 thus far are reassesed with their partial $F$ statistics to see if it has become redundant. If the $F$ statistic is less than $F_{\fout}$, then it is removed. Generally $F_{\fin} > F_{\fout}$ so it makes it harder to add variables than to remove them.
-            \end{pinkbox}\\[-2ex]
+            \end{pinkbox}
+            \vspace{-2ex}
         \end{blackbox}
         \begin{blackbox}{Logistic Regression}
             Logistic distribution\\[-3ex]
@@ -747,7 +750,6 @@ label={[anchor=west, fill=green]north west:\textbf{#1:}},
             \end{pinkbox}\\[-2ex]
         \end{blackbox}
         \begin{blackbox}{Diagonistics Measures for Logistic Regression}
-
             The residuals are defined as $e_i = Y_i - \hat{\pi}_i$, these do not have constant variance. The deviance residuals are \\[-3ex] 
             \[d_i = \pm \left\{2\left[Y_i \ln\left(\frac{Y_i}{n_i\hat{\pi}_i}\right) + (n_i-Y_i)\ln\left(\frac{n_i-Y_i}{n_i(1-\hat{\pi}_i)}\right)\right]\right\}^{1/2}\]
             The standardized Pearson residuals as $r_i = \frac{Y_i - \hat{\pi}_i}{\sqrt{\hat{\pi}_i (1- \hat{\pi}_i)}}$
