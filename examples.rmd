@@ -666,3 +666,126 @@ plot(model2,6)
 ```
 
 The qq-plot shows the assumption of normally distributed residuals is more reasonable now, and the residuals vs fitted is looking more random, however there still is a slight curve which could require more adjustments. 
+
+## Example with Polynomial Regression
+
+For this example we will use the hardwood dataset, we'll start by fitting a simple model and examining its adequecy,
+
+```{r}
+hardwood <- read.table("./Data/hardwood.txt",header=TRUE, sep='\t')
+x <- hardwood$Concentration
+y <- hardwood$Tensile.Strength.Y
+model1 <- lm(y ~ x)
+par(mfrow=c(2,2))
+plot(model1)
+```
+
+We can see from the residuals vs fitted, a very clear parabola shape is present, which indicates that there may be a non linear relationship our model is failing to account for. So, we will try to fit a quadratic model, 
+
+```{r}
+model2 <- lm(y ~ x + I(x^2))
+par(mfrow=c(2,2))
+plot(model2)
+```
+
+We can see now that the residuals vs fitted is slightly more random, however there is still a curve which indicates that there is evidence of a non linear relationship, and that the assumption of constant variance may not be reasonable. A higher order polynomial may be needed to fit the data better. We can also examine the differences in the $R^2$ values that we get from the 2 models, 
+
+```{r}
+
+summary(model1)$r.squared
+summary(model2)$r.squared
+```
+
+As we can see, the $R^2$ value for the quadratic model is much higher, so we can conclude that the quadratic model is a better fit.
+
+# Chapter 8 - Multicolinearity 
+
+We will use the acetylene dataset for this example. 
+
+```{r}
+acetylene <- read.table("./Data/acetylene.txt",header=TRUE, sep='\t')
+acetylene
+```
+
+We want to consider the full quadratic model which takes into account the interactions as well, and we want each of the regression to be scaled using the unit normal scaling (subtract mean and divide by standard deviation). 
+
+```{r}
+P <- acetylene$Acetylene
+T <- scale(acetylene$Temperature)
+H <- scale(acetylene$Ratio)
+C <- scale(acetylene$Contact.Time)
+
+model <- lm(P ~ T + H + C + I(T^2) + I(H^2) + I(C^2) + T*H + T*C + H*C)
+summary(model)
+```
+This gives us our model 
+
+\[\hat{P} = 35.8958 + 4.0038T + 2.7783 H -8.0423C -6.4568TH -26.9804TC\]
+\[-3.7681HC -12.5236T^2 -0.9727H^2-11.5932C^2\]
+
+We can examine the correlation between our predictors
+
+```{r}
+predictors <- c(T,H,C, T*H, T*C, H*C, T^2, H^2, C^2)
+
+df <- data.frame(T, H, C, T*H, H*C, T*C, T^2, H^2, C^2)
+round(cor(df), 3)
+```
+As we can see, there's high correlation between temperataure and contact time, and there are other large correlations between $x_1x_2$ and $x_2x_3$, $x_1x_3$ and $x_1^2$, and $x_1^2$ and $x_3^3$. This is not surprising since these variables are generated from the linear terms and involve highly correlated regressors $x_1$ and $x_3$.
+
+We can compute the variance inflation factors for each of the predictors, 
+
+```{r, message=FALSE}
+library(car)
+vif(model)
+```
+
+As we can see many of these have very high VIF, which certainly indicates multicollinearity. We can also compute the condition number $\kappa$ and condition indices $\kappa_j = \frac{\lambda_{\max}}{\lambda_j}$. Note that $\lambda_j$ are the eigenvalues for the matrix $X'X$.
+
+```{r}
+eigen_values <- eigen(cor(df))$values
+eigen_values
+kappa <- max(eigen_values) / min(eigen_values)
+kappa
+kappa_j <- max(eigen_values) / eigen_values
+kappa_j
+```
+
+As we can see, the condition number $\kappa = 43381.31$ is very large which indicates severe multicollinearity. The condition indices greater than 1000 indicate severe multicollinearity, those between 100 and 1000 indicate moderate to strong multicollinearity, and those bellow 100 have no indication of multicollinearity. 
+
+We can compute the tolerance values as well
+
+```{r}
+ols_coll_diag(model)$vif_t
+```
+
+Tolerance is the amount of variability in one independent variable that is not explained by the other independent variables. To compute it, regress the $k$th predictor on the other predictors in the model and compute the $R^2$ value, then Tolerance $= 1- R^2$. Tolerance values less than 0.10 indicate collinearity.
+
+We can preform ridge regression now as well
+
+```{r}
+ridge_model <- lm.ridge(P ~ T + H + C + I(T^2) + I(H^2) + I(C^2)
+                        + T*H + T*C + H*C, lambda=seq(0,0.1,0.01))
+plot(ridge_model)
+
+```
+
+The y axis represents the coefficient $\hat{\beta}_R$ which is the solution to the equation $(X'X + cI)\hat{\beta}_R = X'Y$, the x-axis is those values of $c$ that we are looking for. We want to choose $c$ large enough to provide stable coefficients but not too large. Now we want to preform cross validation and obtain the best value for $c$.
+
+```{r, message=FALSE, warning=FALSE}
+library(glmnet)
+
+x = data.matrix(df)
+y = P
+model <- glmnet(x,y, alpha=0)
+cv_model <- cv.glmnet(x,y, alpha=0)
+plot(cv_model)
+```
+
+Now we can extract the optimal value of lambda and create the best model, 
+
+```{r}
+lambda <- cv_model$lambda.min
+ridge_model <- glmnet(x,y, alpha=0, lambda=lambda)
+coef(ridge_model)
+```
