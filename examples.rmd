@@ -789,3 +789,67 @@ lambda <- cv_model$lambda.min
 ridge_model <- glmnet(x,y, alpha=0, lambda=lambda)
 coef(ridge_model)
 ```
+
+
+# Chapter 9 - Model Selection
+
+We will use the Hald Cement dataset for this example. 
+
+```{r}
+cement <- read.table("./Data/cement.txt",header=TRUE, sep='\t')
+plot(cement)
+```
+
+
+Looking at the scatterplots, we can see there may be some multicollinearity between $X_2$ and $X_4$. Examining this further we find 
+
+```{r}
+cor(cement)
+model <- lm(Y ~ X1 + X2 + X3 + X4, data=cement)
+ols_coll_diag(model)$vif_t
+```
+
+We can see that there is severe multicollinearity between $X_2$ and $X_4$ and shown by the tolerance being less than 0.1 for both, as well as a very large VIF. We can also see that $X_1$ and $X_3$ have a large correlation and also high VIF and low tolerance.
+
+This suggests we want to try models that do not include all the predictotrs. We first try all possible regressions, 
+
+```{r}
+ols_step_all_possible(model)
+```
+
+We can see that the model with 3 predictors $X_1$,$X_2$, and $X_4$ has the $C_p$ value closest to the number of predictors, as well as one of the highest $R^2$ values. However, we know there is strong multicollinearity between $X_2$ and $X_4$, and the model with $X_1$, $X_2$ and $X_3$ had a slightly higher $C_p$ value and a similar $R^2$. But, we run into the same issue since we know $X_1$ and $X_3$ have multicollinearity, so the next best option would be the model with only $X_1$ and $X_2$. It has a lower $R^2$ value but it is still very high at 0.979, and the $C_p$ value is 2.67 which is also close to the number of predictors. So, we will select the model with $X_1$ and $X_2$. 
+
+Now using best subset selection, 
+
+```{r}
+ols_step_best_subset(model)
+```
+
+We can see that the best model in terms of the $C_p$ statistic and the $R^2$ value is again the model with $X_1, X_2$ and $X_4$. But, as we previously mentioned this model suffers from multicollinearity due to $X_2$ and $X_4$ being present. So, we pick the second best model which is $X_1$ and $X_2$ again.
+
+Now using forward selection,
+
+```{r}
+ols_step_forward_p(model)
+```
+
+We can see that first $X_4$ was entered, then $X_1$, then $X_2$ resulting in the same model that we saw was the best in the previous 2 methods. However, selecting this model would lead to multicollinearity as we've discussed.
+
+With backwards elimination, 
+
+```{r}
+ols_step_backward_p(model)
+```
+
+We can see that we only removed $X_3$, giving us the same model again $X_1$, $X_2$ and $X_3$.
+
+Now using stepwise selection, 
+
+```{r}
+ols_step_both_p(model)
+```
+
+Once again, we end up with $X_1,X_2$ and $X_4$.
+
+
+# Chapter 10 - Logistic Regressio and GLM's
