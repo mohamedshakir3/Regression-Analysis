@@ -112,7 +112,12 @@ It can be shown that $\hat{\beta}$ is an unbiased estimator, and the variance is
 Where $V = \diag(n\hat{\pi}_i(1-\hat{\pi}_i))$. Furthermore, we have 
 \[\frac{\hat{\beta}_k - \beta_k}{s(\hat{\beta}_k)} \sim N(0,1), \ k = 0, \ldots, p-1\]
 \noindent
-We use this for testing and constructing confidence intervals.
+We use this for testing and constructing confidence intervals. The confidence interval on the parameters is given by 
+\[ \hat{\beta}_k - z_{\alpha/2}s(\hat{\beta}_k) \leq \hat{\beta}_k \leq \hat{\beta}_k + z_{\alpha/2}s(\hat{\beta}_k)\]
+For the odds ratio, 
+\[\exp(\hat{\beta}_1 - z_{\alpha/2}se(\hat{\beta}_j)) \leq \hat{O}_R \leq \exp(\hat{\beta}_1 + z_{\alpha/2}se(\hat{\beta}_j))\]
+
+
 
 \section{Testing}
 

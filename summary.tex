@@ -682,7 +682,7 @@ label={[anchor=west, fill=green]north west:\textbf{#1:}},
                 \begin{itemize}[leftmargin=7pt]
                     \item \textbf{Step 1:} Begin with no regressors in the model. Compute the $t$-statistic for each regressor and choose the greatest absolute value. A pre selection critical value $F_{\fin}$ is chosen. 
                     \item \textbf{Step 2:} Choose the next variable using the same criteria. Compute residuals from the regressions of the other regressors on $X_j$, that is the residuals from $\hat{Y} = \hat{\beta}_0 + \hat{\beta}_1X_1$, and $\hat{X}_j = \hat{\alpha}_{0j} + \hat{\alpha}_{1j}X_1$ for $j = 2, \ldots, K$.
-                    \item If $X_2$ is selected, then the largest partial $F$ statistic is $F = SSR(X_2|X_1)/MSE(X_1,X_2)$. If $F > F_{\fin}$, add $X_2$ to the model. Check to drop a variable if the $t$-value drops below a preset limit. Repeat these steps until the largest $F$ value is no longer $> F_{\fin}$, or all variables are added.
+                    \item If $X_2$ is selected, then the largest partial $F$ statistic is $F_0$ (use partial $F$-test), add $X_2$ to the model. Check to drop a variable if the $t$-value drops below a preset limit. Repeat these steps until the largest $F$ value is no longer $> F_{\fin}$, or all variables are added.
                 \end{itemize}
                 \vspace{-2ex}
             \end{redbox}

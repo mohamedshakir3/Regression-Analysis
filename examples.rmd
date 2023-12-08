@@ -438,11 +438,6 @@ Say we want to find the $t$-value for $t_{\alpha_0}$ where $\alpha_0$ is not loc
 Suppose you have the critical value $\alpha_0 = 0.015$, the 2 closest values would be $\alpha_1 = 0.01$, and $\alpha_2 = 0.025$. So, we get 
 \[t_{0.015} \approx \frac{(0.015 - 0.01)(t_{0.025} - t_{0.01})}{0.025 - 0.01}\]
 
-```{r}
-noint <- lm(formula = y~ 0)
-print(noint)
-anova(noint)
-```
 
 # Chapter 5 - Weighted Least Squared and Transformations 
 
