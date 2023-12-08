@@ -479,7 +479,7 @@ label={[anchor=west, fill=green]north west:\textbf{#1:}},
             The fitting value is then 
             \[\hat{y}_0 = x_0'\hat{\beta}\]
             This is an unbiased estimator, $E(y|x_0) = x_0'\beta=E(\hat{y}_0)$, and $\Var(\hat{y}_0) = \sigma^2x_0'(X'X)^{-1}x_0$. The CI is then 
-            \[\left[\hat{y}_0 \pm t_{\alpha/2,n-p}\sqrt{\hat{\sigma}^2x_0'(X'X)^{-1}x_0}\right]\]
+            \[\left[\hat{y}_0 \pm t_{\alpha/2,n-p}\sqrt{\hat{\sigma}^2(1  + x_0'(X'X)^{-1}x_0)}\right]\]
         \end{brownbox}
         \begin{redbox}{Simultaneous Confidence Interval}
             \textbf{Theorem} (Bonferroni Inequality). \textit{
@@ -490,10 +490,10 @@ label={[anchor=west, fill=green]north west:\textbf{#1:}},
             }
             \noindent
             If we define the events \\[-2ex]
-            \[A_1^c: \hat{\beta}_0 \pm t_{1-\alpha/2, n-2}s(\hat{\beta}_0)\]
-            \[A_2^c: \hat{\beta}_1 \pm t_{1-\alpha/2, n-2}s(\hat{\beta}_1)\]
+            \[A_1^c: \hat{\beta}_0 \pm t_{\alpha/2, n-2}s(\hat{\beta}_0)\]
+            \[A_2^c: \hat{\beta}_1 \pm t_{\alpha/2, n-2}s(\hat{\beta}_1)\]
             From Bonforroni's Inequality, if we have $P(A_1) = P(A_2) = \alpha$, then \\[-2ex]
-            \[P(A_1^c \cap A_2^c) \geq 1 - P(A_1) - P(A-2) = 1 - 2\alpha\]
+            \[P(A_1^c \cap A_2^c) \geq 1 - P(A_1) - P(A_2) = 1 - 2\alpha\]
             In general, if we have $p$ parameters and each confidence interval has confidence, $1- \frac{\alpha}{p}$, then \\[-2ex]
             \[P\left(\bigcap_{i=1}^p A_i^c\right) \geq 1 - p\frac{\alpha}{p} = 1 - \alpha\]
         \end{redbox}\\[-2ex]
@@ -574,7 +574,7 @@ label={[anchor=west, fill=green]north west:\textbf{#1:}},
     \begin{blackbox}{Measures of Influence}
         \begin{redbox}{Difference in fit}
             Difference in fit is defined as \\[-2ex]
-            \[DFFITS_i = \frac{\hat{Y}_i - \hat{Y}_{i(i)}}{\sqrt{MSE_{(i)}h_{ii}}} = t_i \left(\frac{h_{ii}}{1-h_{ii}}\right)^2\]
+            \[DFFITS_i = \frac{\hat{Y}_i - \hat{Y}_{i(i)}}{\sqrt{MSE_{(i)}h_{ii}}} = t_i \left(\frac{h_{ii}}{1-h_{ii}}\right)^{1/2}\]
             where $t_i$ is the Studentized deleted residual, \\[-2ex]
             \[t_i = e_i\left(\frac{n-p-1}{SSE(1-h_{ii})-e_i^2}\right)^{\frac{1}{2}}\]
             DFFITS represents the number of estimated standard deviations of $\hat{Y}_i$ that the fitted value increases or decreases. If $X_i$ is an outlier with high liverage, then $|DFFITS_i|$ will be large. We class influential cases if\\[-4ex]
